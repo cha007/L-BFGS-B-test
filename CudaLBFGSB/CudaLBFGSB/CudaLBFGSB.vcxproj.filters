@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CudaCompile Include="L-BFGS\formt.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\freev.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\lnsrlb.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\matupd.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\minimize.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\projgr.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\subsm.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\active.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\bmv.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\cauchy.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\cmprlb.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\dpofa.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+    <CudaCompile Include="L-BFGS\formk.cu">
+      <Filter>L-BFGS</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="L-BFGS">
+      <UniqueIdentifier>{053ecc2d-3f82-4d63-83fa-e076b96627e2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="L-BFGS\lbfgsb.cpp">
+      <Filter>L-BFGS</Filter>
+    </ClCompile>
+    <ClCompile Include="ccnf_test.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="L-BFGS\lbfgsb.h">
+      <Filter>L-BFGS</Filter>
+    </ClInclude>
+    <ClInclude Include="L-BFGS\lbfgsbcuda.h">
+      <Filter>L-BFGS</Filter>
+    </ClInclude>
+    <ClInclude Include="L-BFGS\cutil_inline.h">
+      <Filter>L-BFGS</Filter>
+    </ClInclude>
+    <ClInclude Include="readMat.hpp" />
+    <ClInclude Include="ccnf_test.h" />
+  </ItemGroup>
+</Project>
