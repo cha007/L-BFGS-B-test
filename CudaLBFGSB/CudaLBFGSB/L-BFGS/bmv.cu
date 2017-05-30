@@ -36,20 +36,20 @@ namespace lbfgsbcuda {
 	{
 		__global__ void
 		kernel0(
-			const real* sy,
+			const realreal* sy,
 			const int col,
-			const real* v,
+			const realreal* v,
 			const int iPitch,
-			real* p
+			realreal* p
 		)
 		{
 			const int i = blockIdx.x * blockDim.y + threadIdx.y;
 			const int k = threadIdx.x;
 			const int i2 = col + i;
 
-			volatile __shared__ real sdata[4][9];
+			volatile __shared__ realreal sdata[4][9];
 
-			real mySum = 0;
+			realreal mySum = 0;
 			if(k < i && i < col) {
 				mySum = sy[i * iPitch + k] * v[k] / sy[k * iPitch + k];
 			}
@@ -63,7 +63,7 @@ namespace lbfgsbcuda {
 				// now that we are using warp-synchronous programming (below)
 				// we need to declare our shared memory volatile so that the compiler
 				// doesn't reorder stores to it and induce incorrect behavior.
-				volatile real* smem = sdata[threadIdx.y] + k;
+				volatile realreal* smem = sdata[threadIdx.y] + k;
 				*smem = mySum = mySum + smem[4];
 				*smem = mySum = mySum + smem[2];
 				*smem = mySum = mySum + smem[1];
@@ -76,23 +76,23 @@ namespace lbfgsbcuda {
 
 		__global__ void
 		kernel1(
-			const real* sy,
+		const realreal* sy,
 			const int col,
-			const real* v,
+			const realreal* v,
 			const int iPitch,
-			real* p
+			realreal* p
 		)
 		{
 			const int i = blockIdx.x * blockDim.y + threadIdx.y;
 			const int k = threadIdx.x;
 
-			volatile __shared__ real sdata[4][9];
+			volatile __shared__ realreal sdata[4][9];
 
-			real mySum = 0;
-			real pre = 0;
+			realreal mySum = 0;
+			realreal pre = 0;
 
 			if(i < col) {
-				real syii = 1.0 / sy[i * iPitch + i];
+				realreal syii = 1.0 / sy[i * iPitch + i];
 				pre = -v[i] * syii;
 
 				if(k > i && k < col) {
@@ -109,7 +109,7 @@ namespace lbfgsbcuda {
 				// now that we are using warp-synchronous programming (below)
 				// we need to declare our shared memory volatile so that the compiler
 				// doesn't reorder stores to it and induce incorrect behavior.
-				volatile real* smem = sdata[threadIdx.y] + k;
+				volatile realreal* smem = sdata[threadIdx.y] + k;
 				*smem = mySum = mySum + smem[4];
 				*smem = mySum = mySum + smem[2];
 				*smem = mySum = mySum + smem[1];
@@ -122,20 +122,20 @@ namespace lbfgsbcuda {
 		}
 
 		void prog0(
-			 const real* sy,
+			const realreal* sy,
 			 const int& col,
 			 const int& iPitch,
-			 const real* v,
-			 real* p,
+			 const realreal* v,
+			 realreal* p,
 			 const cudaStream_t& st)
 		{
 			int nblocks = iDivUp(col, 4);
 			
 			if(col <= 1) {
 				if(!st) {
-					cudaMemcpy(p + col, v + col, sizeof(real), cudaMemcpyDeviceToDevice);
+					cudaMemcpy(p + col, v + col, sizeof(realreal), cudaMemcpyDeviceToDevice);
 				} else {
-					cudaMemcpyAsync(p + col, v + col, sizeof(real), cudaMemcpyDeviceToDevice, st);
+					cudaMemcpyAsync(p + col, v + col, sizeof(realreal), cudaMemcpyDeviceToDevice, st);
 				}
 				return;
 			}
@@ -150,11 +150,11 @@ namespace lbfgsbcuda {
 		}
 
 		void prog1(
-			 const real* wt,
+			const realreal* wt,
 			 const int& col,
 			 const int& iPitch,
-			 const real* v,
-			 real* p,
+			 const realreal* v,
+			 realreal* p,
 			 const cudaStream_t& st
 			)
 		{
@@ -183,12 +183,12 @@ namespace lbfgsbcuda {
 		}
 
 		void prog2(
-			 const real* sy,
-			 real* wt,
+			const realreal* sy,
+			realreal* wt,
 			 const int& col,
 			 const int& iPitch,
-			 const real* v,
-			 real* p,
+			 const realreal* v,
+			 realreal* p,
 			 const cudaStream_t& st)
 		{
 			int nblocks = iDivUp(col, 4);

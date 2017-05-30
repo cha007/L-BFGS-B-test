@@ -35,10 +35,10 @@ namespace lbfgsbcuda {
 		__global__
 		void kernel0(
 			const int n,
-			const real* l,
-			const real* u,
+			const realreal* l,
+			const realreal* u,
 			const int* nbd,
-			real* x,
+			realreal* x,
 			int* iwhere
 			)
 		{
@@ -47,9 +47,9 @@ namespace lbfgsbcuda {
 				return;
 
 			int nbdi = nbd[i];
-			real xi = x[i];
-			real li = l[i];
-			real ui = u[i];
+			realreal xi = x[i];
+			realreal li = l[i];
+			realreal ui = u[i];
 			int iwi = -1;
 
 			if(nbdi > 0) {
@@ -77,10 +77,10 @@ namespace lbfgsbcuda {
 
 		void prog0(
 			const int& n,
-			const real* l,
-			const real* u,
+			const realreal* l,
+			const realreal* u,
 			const int* nbd,
-			real* x,
+			realreal* x,
 			int* iwhere
 			) 
 		{

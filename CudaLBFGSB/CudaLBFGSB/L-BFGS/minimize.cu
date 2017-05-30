@@ -3,7 +3,7 @@
 namespace lbfgsbcuda {
 	namespace minimize {
 		__global__ void
-		kernel0(int n, real* d, const real stp) {
+		kernel0(int n, realreal* d, const realreal stp) {
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 			if(i >= n)
 				return;
@@ -12,7 +12,7 @@ namespace lbfgsbcuda {
 		}
 
 		__global__ void
-		kernel1(int n, const real* a, const real* b, real* c) {
+		kernel1(int n, const realreal* a, const realreal* b, realreal* c) {
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 			if(i >= n)
 				return;
@@ -21,17 +21,17 @@ namespace lbfgsbcuda {
 		}
 
 		__global__ void
-		kernel2(int n, real* xdiff, real* xold, const real* x) {
+		kernel2(int n, realreal* xdiff, realreal* xold, const realreal* x) {
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 			if(i >= n)
 				return;
-			real xi = x[i];
+			realreal xi = x[i];
 			xdiff[i] = xold[i] - xi;
 			xold[i] = xi;
 		}
 		void vsub_v(
 			const int n,
-			const real* a, const real* b, real* c,
+			const realreal* a, const realreal* b, realreal* c,
 			const cudaStream_t& stream)
 		{
 			kernel1<<<iDivUp(n, 512), 512, 0, stream>>>
@@ -40,7 +40,7 @@ namespace lbfgsbcuda {
 
 		void vdiffxchg_v(
 			const int n,
-			real* xdiff, real* xold, const real* x,
+			realreal* xdiff, realreal* xold, const realreal* x,
 			const cudaStream_t& stream)
 		{
 			kernel2<<<iDivUp(n, 512), 512, 0, stream>>>
@@ -49,8 +49,8 @@ namespace lbfgsbcuda {
 
 		void vmul_v(
 			const int n,
-			real* d,
-			const real stp,
+			realreal* d,
+			const realreal stp,
 			const cudaStream_t& stream)
 		{
 			kernel0<<<iDivUp(n, 512), 512, 0, stream>>>
@@ -59,9 +59,9 @@ namespace lbfgsbcuda {
 
 		void vdot_vv(
 			const int n,
-			const real* g,
-			const real* d,
-			real& gd,
+			const realreal* g,
+			const realreal* d,
+			realreal& gd,
 			const cudaStream_t& stream
 			)
 		{

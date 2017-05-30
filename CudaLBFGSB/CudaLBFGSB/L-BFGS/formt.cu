@@ -35,9 +35,9 @@ namespace lbfgsbcuda {
 		__global__
 		void kernel0(
 			const int col,
-			real* wt,
-			const real* ss,
-			const real theta)
+			realreal* wt,
+			const realreal* ss,
+			const realreal theta)
 		{
 			const int j = threadIdx.x;
 			wt[j] = theta * ss[j];
@@ -46,11 +46,11 @@ namespace lbfgsbcuda {
 		__global__
 		void kernel1(
 			const int col,
-			const real* sy,
-			const real* ss,
-			real* wt,
+			const realreal* sy,
+			const realreal* ss,
+			realreal* wt,
 			const int iPitch,
-			const real theta
+			const realreal theta
 			)
 		{
 			const int i = blockIdx.y + 1;
@@ -62,9 +62,9 @@ namespace lbfgsbcuda {
 			const int k1 = min(i, j);
 			const int k = threadIdx.x;
 			
-			volatile __shared__ real sdata[4][9];
+			volatile __shared__ realreal sdata[4][9];
 
-			real mySum = 0;
+			realreal mySum = 0;
 			if(k < k1) {
 				mySum = sy[i * iPitch + k] * sy[j * iPitch + k] / sy[k * iPitch + k];
 			}
@@ -73,7 +73,7 @@ namespace lbfgsbcuda {
 			__syncthreads();
 
 			if(k < 4) {
-				volatile real* smem = sdata[threadIdx.y] + k;
+				volatile realreal* smem = sdata[threadIdx.y] + k;
 				*smem = mySum = mySum + smem[4];
 				*smem = mySum = mySum + smem[2];
 				*smem = mySum = mySum + smem[1];
@@ -86,11 +86,11 @@ namespace lbfgsbcuda {
 
 		void prog01(
 			const int col,
-			const real* sy,
-			const real* ss,
-			real* wt,
+			const realreal* sy,
+			const realreal* ss,
+			realreal* wt,
 			const int iPitch,
-			const real theta,
+			const realreal theta,
 			const cudaStream_t& stream
 			)
 		{

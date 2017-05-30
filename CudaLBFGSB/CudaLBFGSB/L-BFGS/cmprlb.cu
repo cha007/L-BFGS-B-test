@@ -35,8 +35,8 @@ namespace lbfgsbcuda {
 		__global__
 		void kernel0(
 		int n,
-		real* r,
-		const real* g)
+		realreal* r,
+		const realreal* g)
 		{
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -55,25 +55,25 @@ namespace lbfgsbcuda {
 		const int head,
 		const int m,
 		const int iPitch,
-		const real* wa,
-		const real* wy,
-		const real* ws,
-		const real theta,
-		const real* z,
-		const real* x,
-		const real* g,
-		real* r
+		const realreal* wa,
+		const realreal* wy,
+		const realreal* ws,
+		const realreal theta,
+		const realreal* z,
+		const realreal* x,
+		const realreal* g,
+		realreal* r
 		)
 		{
 			const int i = blockIdx.x * blockDim.y + threadIdx.y;
 			const int tidx = threadIdx.x; //8
 			const int tidy = threadIdx.y; //64
 			
-			volatile __shared__ real sdata[(512 / bsize)][bsize+1];
+			volatile __shared__ realreal sdata[(512 / bsize)][bsize+1];
 
-			__shared__ real a[2][bsize+1];
+			__shared__ realreal a[2][bsize+1];
 
-			real mySum;
+			realreal mySum;
 
 			if(tidy == 0 && tidx < col) {
 				a[0][tidx] = wa[tidx];
@@ -90,7 +90,7 @@ namespace lbfgsbcuda {
 				mySum = 0;
 			
 			if(bsize > 1) {
-				volatile real* smem = sdata[tidy] + tidx;
+				volatile realreal* smem = sdata[tidy] + tidx;
 				*smem = mySum;
 
 				__syncthreads();
@@ -107,8 +107,8 @@ namespace lbfgsbcuda {
 
 		void prog0(
 			const int n,
-			real* r,
-			const real* g,
+			realreal* r,
+			const realreal* g,
 			const cudaStream_t& stream
 			)
 		{
@@ -123,14 +123,14 @@ namespace lbfgsbcuda {
 			const int head,
 			const int m,
 			const int iPitch,
-			const real* wa,
-			const real* wy,
-			const real* ws,
-			const real theta,
-			const real* z,
-			const real* x,
-			const real* g,
-			real* r,
+			const realreal* wa,
+			const realreal* wy,
+			const realreal* ws,
+			const realreal theta,
+			const realreal* z,
+			const realreal* x,
+			const realreal* g,
+			realreal* r,
 			const cudaStream_t& stream
 			)
 		{

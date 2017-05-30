@@ -40,7 +40,7 @@ extern bool bNewIteration;
 extern FILE* f_result;
 extern int nFuncCall;
 extern bool bShowTestResults;
-extern real stpscal;
+extern realreal stpscal;
 
 inline int iAlignUp(int a, int b)
 {
@@ -123,29 +123,29 @@ inline int fminf(int a, int b) {
 	return a > b ? b : a;
 }
 
-inline real fmaxf(real a, real b) {
+inline realreal fmaxf(realreal a, realreal b) {
 	return a > b ? a : b;
 }
 
-inline real fminf(real a, real b) {
+inline realreal fminf(realreal a, realreal b) {
 	return a > b ? b : a;
 }
 
-inline void vmove_vm(real* dst, const real* src, int ds, int de, int sr, int scs, int spitch) {
+inline void vmove_vm(realreal* dst, const realreal* src, int ds, int de, int sr, int scs, int spitch) {
 	int n = de - ds + 1;
 	for(int i = 0; i < n; i++) {
 		dst[ds + i] = src[(scs + i) * spitch + sr];
 	}
 }
 
-inline void vmove_mv(real* dst, const real* src, int dr, int dcs, int dce, int ss, int dpitch) {
+inline void vmove_mv(realreal* dst, const realreal* src, int dr, int dcs, int dce, int ss, int dpitch) {
 	int n = dce - dcs + 1;
 	for(int i = 0; i < n; i++) {
 		dst[(dcs + i) * dpitch + dr] = src[ss + i];
 	}
 }
 
-inline void vadd_vm(real* dst, const real* src, int ds, int de, int sr, int scs, int spitch, real& alpha) 
+inline void vadd_vm(realreal* dst, const realreal* src, int ds, int de, int sr, int scs, int spitch, realreal& alpha) 
 {
 	int n = de - ds + 1;
 	for(int i = 0; i < n; i++) {
@@ -153,7 +153,7 @@ inline void vadd_vm(real* dst, const real* src, int ds, int de, int sr, int scs,
 	}
 }
 
-inline void vmul_v(real* dst, int ds, int de, const real& alpha) 
+inline void vmul_v(realreal* dst, int ds, int de, const realreal& alpha) 
 {
 	int n = de - ds + 1;
 	for(int i = 0; i < n; i++) {
@@ -161,37 +161,37 @@ inline void vmul_v(real* dst, int ds, int de, const real& alpha)
 	}
 }
 
-inline void vadd_vv(real* dst, const real* src, int ds, int de, int sr, real& alpha) 
+inline void vadd_vv(realreal* dst, const realreal* src, int ds, int de, int sr, realreal& alpha) 
 {
 	vadd_vm(dst, src, ds, de, sr, 0, 1, alpha);
 }
 
-inline real vdot_vm(const real* dst, const real* src, int ds, int de, int sr, int scs, int spitch) 
+inline realreal vdot_vm(const realreal* dst, const realreal* src, int ds, int de, int sr, int scs, int spitch) 
 {
 	int n = de - ds + 1;
-	real r = 0;
+	realreal r = 0;
 	for(int i = 0; i < n; i++) {
 		r += dst[ds + i] * src[(scs + i) * spitch + sr];
 	}
 	return r;
 }
 
-inline real vdot_mm(const real* dst, const real* src, int dr, int dcs, int dce, int dpitch, int sr, int scs, int spitch) 
+inline realreal vdot_mm(const realreal* dst, const realreal* src, int dr, int dcs, int dce, int dpitch, int sr, int scs, int spitch) 
 {
 	int n = dce - dcs + 1;
-	real r = 0;
+	realreal r = 0;
 	for(int i = 0; i < n; i++) {
 		r += dst[(dcs + i) * dpitch + dr] * src[(scs + i) * spitch + sr];
 	}
 	return r;
 }
 
-inline real vdot_vv(const real* dst, const real* src, int ds, int de, int sr) 
+inline realreal vdot_vv(const realreal* dst, const realreal* src, int ds, int de, int sr) 
 {
 	return vdot_vm(dst, src, ds, de, sr, 0, 1);
 }
 
-void funcgrad(real* x, real& f, real* g, const cudaStream_t& stream);
+void funcgrad(realreal* x, realreal& f, realreal* g, const cudaStream_t& stream);
 
 /*************************************************************************
 The  subroutine  minimizes  the  function  F(x) of N arguments with simple
@@ -281,14 +281,14 @@ and it isn't necessary to allocate it in the FuncGrad subroutine.
 *************************************************************************/
 void lbfgsbminimize(const int& n,
 	const int& m,
-	real* x,
-	const real& epsg,
-	const real& epsf,
-	const real& epsx,
+	realreal* x,
+	const realreal& epsg,
+	const realreal& epsf,
+	const realreal& epsx,
 	const int& maxits,
 	const int* nbd,
-	const real* l,
-	const real* u,
+	const realreal* l,
+	const realreal* u,
 	int& info);
 
 #endif

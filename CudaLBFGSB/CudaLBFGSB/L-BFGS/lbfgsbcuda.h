@@ -68,7 +68,7 @@ extern cublasHandle_t cublasHd;
 #define LBFGSB_CUDA_DOUBLE_PRECISION
 
 #ifdef LBFGSB_CUDA_DOUBLE_PRECISION
-typedef double real;
+typedef double realreal;
 #define machineepsilon 5E-16
 #define machinemaximum 1e50
 #define maxr(a, b) fmax(a, b)
@@ -84,7 +84,7 @@ typedef double real;
 #define EPSX 1E-64
 #define MAXITS 1000
 #else
-typedef float real;
+typedef float realreal;
 #define machineepsilon 5E-7f
 #define machinemaximum 1e20f
 #define maxr(a, b) fmaxf(a, b)
@@ -119,21 +119,21 @@ namespace lbfgsbcuda {
 		return (a > (c << b)) ? (c + 1) : c;
 	}
 	inline int log2Up(int n) {
-		real lnb = log10((real)n);
-		real nker = ceil(lnb * inv9l2);
+		realreal lnb = log10((realreal)n);
+		realreal nker = ceil(lnb * inv9l2);
 		int m = ceil(lnb * invl2 / nker);
 		m = __max(6, m);
 		return m;
 	}
-	inline void CheckBuffer(const real* q, int stride, int total) {
+	inline void CheckBuffer(const realreal* q, int stride, int total) {
 #ifdef _DEBUG
 		if(stride <= 0 || total <= 0)
 			return;
 		int h = iDivUp(total, stride);
 		int wh = h * stride;
-		real* hq = new real[wh];
-		memset(hq, 0, sizeof(real) * wh);
-		cutilSafeCall(cudaMemcpy(hq, q, total * sizeof(real), cudaMemcpyDeviceToHost));
+		realreal* hq = new realreal[wh];
+		memset(hq, 0, sizeof(realreal) * wh);
+		cutilSafeCall(cudaMemcpy(hq, q, total * sizeof(realreal), cudaMemcpyDeviceToHost));
 
 /*
 		char* pBufStr = new char[30 * wh];
@@ -186,75 +186,75 @@ namespace lbfgsbcuda {
 	namespace minimize {
 		void vdot_vv(
 			int n,
-			const real* g,
-			const real* d,
-			real& gd,
+			const realreal* g,
+			const realreal* d,
+			realreal& gd,
 			const cudaStream_t& stream = NULL
 			);
 		void vmul_v(
 			const int n,
-			real* d,
-			const real stp,
+			realreal* d,
+			const realreal stp,
 			const cudaStream_t& stream = NULL
 			);
 		void vsub_v(
 			const int n,
-			const real* a, const real* b, real* c, const cudaStream_t& stream = NULL);
+			const realreal* a, const realreal* b, realreal* c, const cudaStream_t& stream = NULL);
 		void vdiffxchg_v(
 			const int n,
-			real* xdiff, real* xold, const real* x,
+			realreal* xdiff, realreal* xold, const realreal* x,
 			const cudaStream_t& stream = NULL
 			);
 	};
 	namespace active {
 		void prog0(
 			const int& n,
-			const real* l,
-			const real* u,
+			const realreal* l,
+			const realreal* u,
 			const int* nbd,
-			real* x,
+			realreal* x,
 			int* iwhere
 			);
 	};
 	namespace projgr {
 		void prog0(const int& n,
-			const real* l,
-			const real* u,
+			const realreal* l,
+			const realreal* u,
 			const int* nbd,
-			const real* x,
-			const real* g,
-			real* buf_n,
-			real* sbgnrm,
-			real* sbgnrm_dev,
+			const realreal* x,
+			const realreal* g,
+			realreal* buf_n,
+			realreal* sbgnrm,
+			realreal* sbgnrm_dev,
 			const cudaStream_t& stream);
 	};
 	namespace cauchy {
 		void prog0
 			(const int& n,
-			const real* x,
-			const real* l,
-			const real* u,
+			const realreal* x,
+			const realreal* l,
+			const realreal* u,
 			const int* nbd,
-			const real* g,
-			real* t,
-			real* xcp,
-			real* xcpb,
+			const realreal* g,
+			realreal* t,
+			realreal* xcp,
+			realreal* xcpb,
 			const int& m,
-			const real* wy,
-			const real* ws,
-			const real* sy,
+			const realreal* wy,
+			const realreal* ws,
+			const realreal* sy,
 			const int iPitch,
-			real* wt,
-			const real& theta,
+			realreal* wt,
+			const realreal& theta,
 			const int& col,
 			const int& head,
-			real* p,
-			real* c,
-			real* v,
+			realreal* p,
+			realreal* c,
+			realreal* v,
 			int& nint,
-			const real& sbgnrm,
-			real* buf_s_r,
-			real* buf_array_p,
+			const realreal& sbgnrm,
+			realreal* buf_s_r,
+			realreal* buf_array_p,
 			int* iwhere,
 			const int& iPitch_normal,
 			const cudaStream_t* streamPool
@@ -282,7 +282,7 @@ namespace lbfgsbcuda {
 	};
 	namespace formk {
 		void prog0(
-			real* wn1,
+			realreal* wn1,
 			int m,
 			int iPitch_wn,
 			const cudaStream_t* streamPool
@@ -292,10 +292,10 @@ namespace lbfgsbcuda {
 			const int nsub,
 			const int ipntr,
 			const int* ind,
-			real* wn1,
-			real* buf_array_p,
-			const real* ws,
-			const real* wy,
+			realreal* wn1,
+			realreal* buf_array_p,
+			const realreal* ws,
+			const realreal* wy,
 			const int head,
 			const int m,
 			const int col,
@@ -305,7 +305,7 @@ namespace lbfgsbcuda {
 			const cudaStream_t* streamPool
 			);
 		void prog2(
-			real* wn1,
+			realreal* wn1,
 			const int col,
 			const int m,
 			const int iPitch_wn,
@@ -322,10 +322,10 @@ namespace lbfgsbcuda {
 			const int iPitch_ws,
 			const int iPitch_wn,
 			const int jy,
-			const real* ws,
-			const real* wy,
-			real* buf_array_p,
-			real* wn1,
+			const realreal* ws,
+			const realreal* wy,
+			realreal* buf_array_p,
+			realreal* wn1,
 			const int iPitch_normal,
 			const cudaStream_t* streamPool);
 		void prog31(
@@ -339,10 +339,10 @@ namespace lbfgsbcuda {
 			const int n, 
 			const int iPitch_ws, 
 			const int iPitch_wn, 
-			const real* wy, 
-			real* buf_array_sup, 
-			real* wn1,
-			const real scal,
+			const realreal* wy, 
+			realreal* buf_array_sup, 
+			realreal* wn1,
+			const realreal scal,
 			const int iPitch_super,
 			const cudaStream_t* streamPool		
 			);
@@ -356,10 +356,10 @@ namespace lbfgsbcuda {
 			const int n, 
 			const int iPitch_ws, 
 			const int iPitch_wn, 
-			const real* wy, 
-			const real* ws, 
-			real* buf_array_sup, 
-			real* wn1,
+			const realreal* wy, 
+			const realreal* ws, 
+			realreal* buf_array_sup, 
+			realreal* wn1,
 			const int iPitch_super,
 			const cudaStream_t* streamPool			
 			);
@@ -368,22 +368,22 @@ namespace lbfgsbcuda {
 			const int iPitch_wn,
 			const int iPitch_ws,
 			const int m,
-			const real* wn1,
-			const real theta,
-			const real* sy,
-			real* wn,
+			const realreal* wn1,
+			const realreal theta,
+			const realreal* sy,
+			realreal* wn,
 			const cudaStream_t* streamPool);
 		void prog5(
 			const int col,
 			const int iPitch_wn,
-			real* wn,
+			realreal* wn,
 			const cudaStream_t* streamPool);
 	};
 	namespace cmprlb {
 		void prog0(
 			int n,
-			real* r,
-			const real* g,
+			realreal* r,
+			const realreal* g,
 			const cudaStream_t& stream
 			);
 		void prog1(
@@ -393,14 +393,14 @@ namespace lbfgsbcuda {
 			const int head,
 			const int m,
 			const int iPitch,
-			const real* wa,
-			const real* wy,
-			const real* ws,
-			const real theta,
-			const real* z,
-			const real* x,
-			const real* g,
-			real* r,
+			const realreal* wa,
+			const realreal* wy,
+			const realreal* ws,
+			const realreal theta,
+			const realreal* z,
+			const realreal* x,
+			const realreal* g,
+			realreal* r,
 			const cudaStream_t& stream
 			);
 	};
@@ -412,20 +412,20 @@ namespace lbfgsbcuda {
 			const int m,
 			const int col,
 			const int iPitch_ws,
-			real* buf_array_p,
-			const real* wy,
-			const real* ws,
-			const real* d,
-			real* wv,
-			const real theta,
+			realreal* buf_array_p,
+			const realreal* wy,
+			const realreal* ws,
+			const realreal* d,
+			realreal* wv,
+			const realreal theta,
 			const int iPitch_normal,
 			const cudaStream_t& stream
 			);
 		void prog1(
-			real* wn,
+			realreal* wn,
 			int col,
 			int iPitch_wn,
-			real* wv,
+			realreal* wv,
 			const cudaStream_t& stream
 			);
 		void prog2(
@@ -435,11 +435,11 @@ namespace lbfgsbcuda {
 			const int head,
 			const int m,
 			const int iPitch,
-			const real* wv,
-			const real* wy,
-			const real* ws,
-			const real theta,
-			real* d,
+			const realreal* wv,
+			const realreal* wy,
+			const realreal* ws,
+			const realreal theta,
+			realreal* d,
 			const cudaStream_t& stream
 			);
 		void prog21
@@ -447,48 +447,48 @@ namespace lbfgsbcuda {
 			int n,
 			int nsub,
 			const int* ind,
-			const real* d,
-			real* x,
-			const real* l,
-			const real* u,
+			const realreal* d,
+			realreal* x,
+			const realreal* l,
+			const realreal* u,
 			const int* nbd,
-			const real* xx,
-			const real* gg,
-			real* buf_n_r,
-			real* pddp,
+			const realreal* xx,
+			const realreal* gg,
+			realreal* buf_n_r,
+			realreal* pddp,
 			const cudaStream_t& stream);
 		void prog3
 			(int nsub,
 			const int* ind,
-			real* d,
+			realreal* d,
 			const int* nbd,
-			real* buf_s_r,
+			realreal* buf_s_r,
 			int* bufi_s_r,
-			real* x,
-			const real* u,
-			const real* l,
+			realreal* x,
+			const realreal* u,
+			const realreal* l,
 			const cudaStream_t& stream
 			);
 	};
 	namespace lnsrlb {
 		void prog0(
 			int n,
-			const real* d,
+			const realreal* d,
 			const int* nbd,
-			const real* u,
-			const real* x,
-			const real* l,
-			real* buf_s_r,
-			real* stpmx_host,
-			real* stpmx_dev,			
+			const realreal* u,
+			const realreal* x,
+			const realreal* l,
+			realreal* buf_s_r,
+			realreal* stpmx_host,
+			realreal* stpmx_dev,			
 			const cudaStream_t& stream
 			);
 		void prog2(
 			int n,
-			real* x,
-			real* d,
-			const real* t,
-			const real stp,
+			realreal* x,
+			realreal* d,
+			const realreal* t,
+			const realreal stp,
 			const cudaStream_t& stream
 			);
 	};
@@ -496,59 +496,59 @@ namespace lbfgsbcuda {
 		void prog0(
 			const int& n,
 			const int& m,
-			real* wy,
-			real* sy,
-			const real* r,
-			const real* d,
+			realreal* wy,
+			realreal* sy,
+			const realreal* r,
+			const realreal* d,
 			int& itail,
 			const int& iupdat,
 			int& col,
 			int& head,
-			const real& dr,
+			const realreal& dr,
 			const int& iPitch0,
 			const int& iPitch_i,
 			const int& iPitch_j,
-			real* buf_array_p,
+			realreal* buf_array_p,
 			const int& iPitch_normal,
 			cudaStream_t st);
 	};
 	namespace formt {
 		void prog01(
 			const int col,
-			const real* sy,
-			const real* ss,
-			real* wt,
+			const realreal* sy,
+			const realreal* ss,
+			realreal* wt,
 			const int iPitch,
-			const real theta,
+			const realreal theta,
 			const cudaStream_t& stream
 			);
 	};
 	namespace bmv {
 		void prog0(
-			const real* sy,
+			const realreal* sy,
 			const int& col,
 			const int& iPitch,
-			const real* v,
-			real* p,
+			const realreal* v,
+			realreal* p,
 			const cudaStream_t& st);
 		void prog1(
-			const real* wt,
+			const realreal* wt,
 			const int& col,
 			const int& iPitch,
-			const real* v,
-			real* p,
+			const realreal* v,
+			realreal* p,
 			const cudaStream_t& st
 			);
 		void prog2(
-			const real* sy,
-			real* wt,
+			const realreal* sy,
+			realreal* wt,
 			const int& col,
 			const int& iPitch,
-			const real* v,
-			real* p,
+			const realreal* v,
+			realreal* p,
 			const cudaStream_t& st);
 	};
 	namespace dpofa {
-		void prog0(real* m, int n, int pitch, int boffset, const cudaStream_t& st);
+		void prog0(realreal* m, int n, int pitch, int boffset, const cudaStream_t& st);
 	};
 };

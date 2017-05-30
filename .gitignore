@@ -1,0 +1,16 @@
+
+*.deps
+*.obj
+*.dll
+*.tlog
+*.cache
+*.log
+*.lib
+*.mat
+*.sdf
+*.opensdf
+*.pdb
+*.exe
+*.txt
+*.ilk
+*.idb

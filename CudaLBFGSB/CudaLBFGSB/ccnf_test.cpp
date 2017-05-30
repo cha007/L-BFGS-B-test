@@ -15,7 +15,7 @@ using namespace std;
 using namespace Eigen;
 cublasHandle_t cublasHd;
 double stpscal;
-size_t num_size;
+int num_params;
 void randInitializeWeights(MatrixXd* initial_Theta, int L_in, int L_out){
 	double epsilon_init = 1.0f / sqrtf(L_in);
 	for (int i = 0; i < initial_Theta->rows(); ++i) {
@@ -249,7 +249,7 @@ void objectiveFunction(
 	gradientParams -= gradientParamsSub;
 	*gradient = -gradientParams;
  out << "*gradient" << endl << (*gradient).adjoint() << endl;
- out << "*CholDecomp" << endl << CholDecomp << endl;
+ //out << "*CholDecomp" << endl << CholDecomp << endl;
 	double log_normalisation = num_seqs * CholDecomp.diagonal().array().log().sum();
 	MatrixXd ymu = *y - mus;
 	MatrixXd y1 = SigmaInv * ymu;
@@ -279,7 +279,7 @@ float best_lambda_b = 7500.0f;
 float best_lambda_th = 1.0f;
 int num_seqs = 2915;
 int num_reinit = 20;
-
+realreal* xx_opti;
 MatrixXd xEigen;
 MatrixXd yEigen;
 MatrixXd Precalc_Bs_0_Eigen;
@@ -394,29 +394,29 @@ int callCpuCCNF(){
 	std::vector<MatrixXd> thetas_good(num_reinit);
 	std::vector<float> lhood(num_reinit);
 
-	for (int i = 0;  i < num_reinit; i++){
-		srand((unsigned)time(NULL));
-		thetas_good[i] = MatrixXd::Zero(best_num_layer, (input_layer_size + 1));
-		randInitializeWeights(&thetas_good[i], input_layer_size, best_num_layer);		
-		lhood[i] = LogLikelihoodCCNF(
-			&yEigen,
-			&xEigen,
-			&alpha,
-			&betas,
-			&thetas_good[i],
-			best_lambda_a,
-			best_lambda_b,
-			best_lambda_th,
-			&Precalc_Bs_flatEigen,
-			0,
-			0,
-			0,
-			0,
-			num_seqs,
-			0
-			);
-		printf("%d %f\n", i, lhood[i]);
-	}
+// 	for (int i = 0;  i < num_reinit; i++){
+// 		srand((unsigned)time(NULL));
+// 		thetas_good[i] = MatrixXd::Zero(best_num_layer, (input_layer_size + 1));
+// 		randInitializeWeights(&thetas_good[i], input_layer_size, best_num_layer);		
+// 		lhood[i] = LogLikelihoodCCNF(
+// 			&yEigen,
+// 			&xEigen,
+// 			&alpha,
+// 			&betas,
+// 			&thetas_good[i],
+// 			best_lambda_a,
+// 			best_lambda_b,
+// 			best_lambda_th,
+// 			&Precalc_Bs_flatEigen,
+// 			0,
+// 			0,
+// 			0,
+// 			0,
+// 			num_seqs,
+// 			0
+// 			);
+// 		printf("%d %f\n", i, lhood[i]);
+// 	}
 	std::vector<float>::iterator result;
 	result = std::max_element(lhood.begin(), lhood.end());
 	int index = std::distance(lhood.begin(), result);
@@ -424,46 +424,67 @@ int callCpuCCNF(){
  
 	VectorXd params = VectorXd::Zero(alpha.size() + betas.size() + thetas.rows() * thetas.cols());
 	VectorXd B(Map<VectorXd>(thetas.data(), thetas.cols()*thetas.rows()));
-	//params << alpha, betas, B;
+//	params << alpha, betas, B;
 	params = Eigen::Map<Eigen::VectorXd>(paramsVecs.data.data(), paramsVecs.M);
 
-// 	double loss;
-// 	VectorXd gradient = VectorXd::Zero(alpha.size() + betas.size() + thetas.rows() * thetas.cols());
-// 	objectiveFunction(
-// 		&loss, 
-// 		&gradient, 
-// 		&params, 
-// 		alpha.size(), 
-// 		betas.size(), 
-// 		thetas.rows(), 
-// 		thetas.cols(), 
-// 		best_lambda_a,
-// 		best_lambda_b,
-// 		best_lambda_th,
-// 		&Precalc_Bs_0_Eigen,
-// 		&Precalc_Bs_1_Eigen,
-// 		&Precalc_Bs_2_Eigen,
-// 		&xEigen, 
-// 		&yEigen,
-// 		&Precalc_yBysEigen,
-// 		&Precalc_Bs_flatEigen);
-	// CPU
 	const size_t NX = params.size();
 	VectorXf params_f = params.cast <float>();
 	cout << NX << endl;
-	num_size = NX;
-	/*lbfgsbminimize(const int& n,
-		const int& m0,
-		real* x,
-		const real& epsg,
-		const real& epsf,
-		const real& epsx,
-		const int& maxits,
-		const int* nbd,
-		const real* l,
-		const real* u,
-		int& info
-		)
+	num_params = NX;
+	// Use L-BFGS method to compute new sites
+	const realreal epsg = EPSG;
+	const realreal epsf = EPSF;
+	const realreal epsx = EPSX;
+	const int maxits = 200;
+	stpscal = 2.75f; //Set for different problems!
+	int info;
+
+	//gpu buffer
+	int* nbd;
+	realreal* x;
+	realreal* l;
+	realreal* u;
+	memAlloc<int>(&nbd, NX);
+	memAlloc<realreal>(&x, NX);
+	memAlloc<realreal>(&l, NX);
+	memAlloc<realreal>(&u, NX);
+	//cpu buffer
+	int* nbd_ = (int*)malloc(sizeof(int)* NX);
+	realreal* l_ = (realreal*)malloc(sizeof(realreal) * NX);
+	realreal* u_ = (realreal*)malloc(sizeof(realreal) * NX);
+	xx_opti = (realreal*)malloc(sizeof(realreal)* NX);
+
+	for (int i = 0; i < NX; i++){
+		nbd_[i] = 0;
+	}
+	cout << "alpha betas size" << (alpha.size() + betas.size()) << endl;
+	for (int i = 0; i < (alpha.size() + betas.size()); i++){
+		nbd_[i] = 1;
+		l_[i] = 0.0;
+	}
+	memCopy(nbd, nbd_, NX * sizeof(int), cudaMemcpyHostToDevice);
+	memCopy(l, l_, NX * sizeof(realreal), cudaMemcpyHostToDevice);
+	memCopy(u, u_, NX * sizeof(realreal), cudaMemcpyHostToDevice);
+	memCopy(x, params.data(), NX * sizeof(realreal), cudaMemcpyHostToDevice);
+
+	printf("Start optimization...\n");
+	stpscal = 1.0f;//2.75f;
+
+	int	m = 8;
+	if (NX < m)
+		m = NX;
+	lbfgsbminimize(NX, m, x, epsg, epsf, epsx, maxits, nbd, l, u, info);
+	printf("Ending code:%d\n", info);
+
+	memFree(x);
+	memFree(nbd);
+	memFree(l);
+	memFree(u);
+	free(nbd_);
+	free(l_);
+	free(u_);
+	free(xx_opti);
+	/*	// CPU
 	cpu_ccnf rb1(NX);
 	lbfgs minimizer(rb1);
 	minimizer.setGradientEpsilon(1e-3f);
@@ -473,6 +494,45 @@ int callCpuCCNF(){
 	stat = minimizer.minimize_with_host_x(params_f.data());
 	cout << minimizer.statusToString(stat).c_str() << endl; */
 	return 0;
+}
+
+void funcgrad(realreal* xxx, realreal& f, realreal* g, const cudaStream_t& stream){
+	memCopy(xx_opti, xxx, sizeof(realreal)* num_params, cudaMemcpyDeviceToHost);
+
+	static int count_ = 0;
+	cout << "[" << count_ << "] begin" << endl;
+	//VectorXf params_f = Map<Eigen::VectorXf>(xx_opti, m_numDimensions, 1);
+	VectorXd params = Map<Eigen::VectorXd>(xx_opti, num_params, 1);
+	double loss;
+	VectorXd gradient = VectorXd::Zero(num_params);
+	objectiveFunction(
+		&loss,
+		&gradient,
+		&params,
+		best_num_layer,
+		3,
+		best_num_layer,
+		(input_layer_size + 1),
+		best_lambda_a,
+		best_lambda_b,
+		best_lambda_th,
+		&Precalc_Bs_0_Eigen,
+		&Precalc_Bs_1_Eigen,
+		&Precalc_Bs_2_Eigen,
+		&xEigen,
+		&yEigen,
+		&Precalc_yBysEigen,
+		&Precalc_Bs_flatEigen);
+	f = (float)loss;
+
+	cout << "[" << count_++ << "] " << f << endl;
+// 	VectorXf params_ff = gradient.cast <float>();
+// 	for (size_t i = 0; i < num_params; ++i){
+// 		h_gradf[i] = params_ff[i];
+// 	}
+
+	memCopy(g, gradient.data(), sizeof(realreal)* num_params, cudaMemcpyHostToDevice);
+	lbfgsbcuda::CheckBuffer(g, num_params, num_params);
 }
 int callGpuCCNF(){
 	return 0;

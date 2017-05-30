@@ -33,32 +33,32 @@ Contributors:
 namespace lbfgsbcuda {
 	namespace lnsrlb {
 
-		const static __constant__ real big = 1.0E10;
+		const static __constant__ realreal big = 1.0E10;
 		template<int bx>		
 		__global__ void
 		kernel00(
 			int n,
-			const real* d,
+			const realreal* d,
 			const int* nbd,
-			const real* u,
-			const real* x,
-			const real* l,
-			real* output
+			const realreal* u,
+			const realreal* x,
+			const realreal* l,
+			realreal* output
 			)
 		{
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 
 			const int tid = threadIdx.x;
-			volatile __shared__ real sdata[bx];
+			volatile __shared__ realreal sdata[bx];
 
-			real mySum = big;
+			realreal mySum = big;
 			if(i < n) {
-				real a1 = d[i];
+				realreal a1 = d[i];
 				int nbdi = nbd[i];
 				if(nbdi != 0) 
 				{
-					real xi = x[i];
-					real a2;
+					realreal xi = x[i];
+					realreal a2;
 					if(a1 > 0) {
 						a2 = u[i] - xi;
 					} else {
@@ -82,7 +82,7 @@ namespace lbfgsbcuda {
 				// now that we are using warp-synchronous programming (below)
 				// we need to declare our shared memory volatile so that the compiler
 				// doesn't reorder stores to it and induce incorrect behavior.
-				volatile real* smem = sdata + tid;
+				volatile realreal* smem = sdata + tid;
 				if(bx > 32) {*smem = mySum = minr(mySum, smem[32]);}
 				if(bx > 16) {*smem = mySum = minr(mySum, smem[16]);}
 				if(bx > 8) {*smem = mySum = minr(mySum, smem[8]);}
@@ -98,15 +98,15 @@ namespace lbfgsbcuda {
 		__global__
 		void kernel01(
 			int n,
-			const real* buf_in,
-			real* buf_out)
+			const realreal* buf_in,
+			realreal* buf_out)
 		{
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 			const int tid = threadIdx.x;
 			
-			volatile __shared__ real sdata[bx];
+			volatile __shared__ realreal sdata[bx];
 
-			real mySum;
+			realreal mySum;
 
 			if(i < n)
 				mySum = buf_in[i];
@@ -125,7 +125,7 @@ namespace lbfgsbcuda {
 				// now that we are using warp-synchronous programming (below)
 				// we need to declare our shared memory volatile so that the compiler
 				// doesn't reorder stores to it and induce incorrect behavior.
-				volatile real* smem = sdata + tid;
+				volatile realreal* smem = sdata + tid;
 				if(bx > 32) {*smem = mySum = minr(mySum, smem[32]);}
 				if(bx > 16) {*smem = mySum = minr(mySum, smem[16]);}
 				if(bx > 8) {*smem = mySum = minr(mySum, smem[8]);}
@@ -142,30 +142,30 @@ namespace lbfgsbcuda {
 		__global__
 		void kernel2(
 			int n,
-			real* x,
-			real* d,
-			const real* t,
-			const real stp
+			realreal* x,
+			realreal* d,
+			const realreal* t,
+			const realreal stp
 			)
 		{
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 			if(i >= n) 
 				return;
 
-			real u = stp * d[i];
+			realreal u = stp * d[i];
 			x[i] = t[i] + u;
 		}
 
 		void prog0(
 			int n,
-			const real* d,
+			const realreal* d,
 			const int* nbd,
-			const real* u,
-			const real* x,
-			const real* l,
-			real* buf_s_r,
-			real* stpmx_host,
-			real* stpmx_dev,			
+			const realreal* u,
+			const realreal* x,
+			const realreal* l,
+			realreal* buf_s_r,
+			realreal* stpmx_host,
+			realreal* stpmx_dev,			
 			const cudaStream_t& stream
 			)
 		{
@@ -173,7 +173,7 @@ namespace lbfgsbcuda {
 			int mi = log2Up(nblock0);
 			int nblock1 = iDivUp2(nblock0, mi);
 
-			real* output = (nblock1 == 1) ? stpmx_dev : buf_s_r;
+			realreal* output = (nblock1 == 1) ? stpmx_dev : buf_s_r;
 			dynamicCall(kernel00, mi, nblock1, 1, stream, (n, d, nbd, u, x, l, output));
 						
 			nblock0 = nblock1;
@@ -181,7 +181,7 @@ namespace lbfgsbcuda {
 
 				nblock1 = iDivUp2(nblock0, mi);
 
-				real* input = output;
+				realreal* input = output;
 
 				output = (nblock1 == 1) ? stpmx_dev : (output + nblock0);
 				dynamicCall(kernel01, mi, nblock1, 1, stream, (nblock0, input, output));
@@ -192,10 +192,10 @@ namespace lbfgsbcuda {
 
 		void prog2(
 			int n,
-			real* x,
-			real* d,
-			const real* t,
-			const real stp,
+			realreal* x,
+			realreal* d,
+			const realreal* t,
+			const realreal stp,
 			const cudaStream_t& stream
 			)
 		{

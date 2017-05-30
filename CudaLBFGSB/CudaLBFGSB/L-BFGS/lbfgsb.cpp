@@ -39,70 +39,70 @@ Contributors:
 //#define USE_STREAM
 
 inline void lbfgsbactive(const int& n,
-	const real* l,
-	const real* u,
+	const realreal* l,
+	const realreal* u,
 	const int* nbd,
-	real* x,
+	realreal* x,
 	int* iwhere
 	);
 inline void lbfgsbbmv(const int& m,
-	const real* sy,
-	real* wt,
+	const realreal* sy,
+	realreal* wt,
 	const int& col,
 	const int& iPitch,
-	const real* v,
-	real* p,
+	const realreal* v,
+	realreal* p,
 	const cudaStream_t& stream,
 	int& info);
 inline void lbfgsbcauchy(const int& n,
-	const real* x,
-	const real* l,
-	const real* u,
+	const realreal* x,
+	const realreal* l,
+	const realreal* u,
 	const int* nbd,
-	const real* g,
-	real* t,
-	real* xcp,
-	real* xcpb,
+	const realreal* g,
+	realreal* t,
+	realreal* xcp,
+	realreal* xcpb,
 	const int& m,
-	const real* wy,
-	const real* ws,
-	const real* sy,
+	const realreal* wy,
+	const realreal* ws,
+	const realreal* sy,
 	const int iPitch,
-	real* wt,
-	const real& theta,
+	realreal* wt,
+	const realreal& theta,
 	const int& col,
 	const int& head,
-	real* p,
-	real* c,
-	real* v,
+	realreal* p,
+	realreal* c,
+	realreal* v,
 	int& nint,
-	const real& sbgnrm,
-	real* buf_s_r,
-	real* buf_array_p,
+	const realreal& sbgnrm,
+	realreal* buf_s_r,
+	realreal* buf_array_p,
 	int* iwhere,
 	const int& iPitch_normal,
 	const cudaStream_t* streamPool,
 	int& info);
 inline void lbfgsbcmprlb(const int& n,
      const int& m,
-     const real* x,
-     const real* g,
-     const real* ws,
-     const real* wy,
-     const real* sy,
-     real* wt,
-     const real* z,
-     real* r,
-     real* wa,
+     const realreal* x,
+     const realreal* g,
+     const realreal* ws,
+     const realreal* wy,
+     const realreal* sy,
+     realreal* wt,
+     const realreal* z,
+     realreal* r,
+     realreal* wa,
      const int* index,
-     const real& theta,
+     const realreal& theta,
      const int& col,
      const int& head,
 	 const int& nfree,
 	 const bool& cnstnd,
      int& info,
-     real* workvec,
-     real* workvec2,
+     realreal* workvec,
+     realreal* workvec2,
 	 const int& iPitch,
 	 const cudaStream_t& stream
 	 );
@@ -114,20 +114,20 @@ inline void lbfgsbformk(const int& n,
 	const int* indx2,
 	const int& iupdat,
 	const bool& updatd,
-	real* wn,
-	real* wn1,
+	realreal* wn,
+	realreal* wn1,
 	const int& m,
-	const real* ws,
-	const real* wy,
-	const real* sy,
-	const real& theta,
+	const realreal* ws,
+	const realreal* wy,
+	const realreal* sy,
+	const realreal& theta,
 	const int& col,
 	const int& head,
 	int& info,
-	real* workvec,
-	real* workmat,
-	real* buf_array_p,
-	real* buf_array_super,
+	realreal* workvec,
+	realreal* workmat,
+	realreal* buf_array_p,
+	realreal* buf_array_super,
 	const int& iPitch_wn,
 	const int& iPitch_ws,
 	const int& iPitch_super,
@@ -135,34 +135,34 @@ inline void lbfgsbformk(const int& n,
 	const cudaStream_t* streamPool
 	);
 inline void lbfgsbformt(const int& m,
-	real* wt,
-	const real* sy,
-	const real* ss,
+	realreal* wt,
+	const realreal* sy,
+	const realreal* ss,
 	const int& col,
-	const real& theta,
+	const realreal& theta,
 	int& info,
 	const int& iPitch,
 	const cudaStream_t* streamPool
 	);
 inline void lbfgsblnsrlb(const int& n,
-	const real* l,
-	const real* u,
+	const realreal* l,
+	const realreal* u,
 	const int* nbd,
-	real* x,
-	const real& f,
-	real& fold,
-	real& gd,
-	real& gdold,
-	const real* g,
-	real* d,
-	real* r,
-	real* t,
-	const real* z,
-	real& stp,
-	real& dnrm,
-	real& dtd,
-	real& xstep,
-	real& stpmx,
+	realreal* x,
+	const realreal& f,
+	realreal& fold,
+	realreal& gd,
+	realreal& gdold,
+	const realreal* g,
+	realreal* d,
+	realreal* r,
+	realreal* t,
+	const realreal* z,
+	realreal& stp,
+	realreal& dnrm,
+	realreal& dtd,
+	realreal& xstep,
+	realreal& stpmx,
 	const int& iter,
 	int& ifun,
 	int& iback,
@@ -171,114 +171,114 @@ inline void lbfgsblnsrlb(const int& n,
 	int& task,
 	int& csave,
 	int* isave,
-	real* dsave,
-	real* buf_s_r,
+	realreal* dsave,
+	realreal* buf_s_r,
 	const cudaStream_t* streamPool
 	);
 inline void lbfgsbmatupdsub(const int& n,
 	const int& m,
-	real* wy,
-	real* sy,
-	const real* r,
-	const real* d,
+	realreal* wy,
+	realreal* sy,
+	const realreal* r,
+	const realreal* d,
 	int& itail,
 	const int& iupdat,
 	int& col,
 	int& head,
-	const real& dr,
+	const realreal& dr,
 	const int& iPitch0,
 	const int& iPitch_i,
 	const int& iPitch_j
 	);
 inline void lbfgsbmatupd(const int& n,
 	const int& m,
-	real* ws,
-	real* wy,
-	real* sy,
-	real* ss,
-	const real* d,
-	const real* r,
+	realreal* ws,
+	realreal* wy,
+	realreal* sy,
+	realreal* ss,
+	const realreal* d,
+	const realreal* r,
 	int& itail,
 	const int& iupdat,
 	int& col,
 	int& head,
-	real& theta,
-	const real& rr,
-	const real& dr,
-	const real& stp,
-	const real& dtd,
+	realreal& theta,
+	const realreal& rr,
+	const realreal& dr,
+	const realreal& stp,
+	const realreal& dtd,
 	const int& iPitch,
-	real* buf_array_p,
+	realreal* buf_array_p,
 	const int& iPitch_normal,
 	const cudaStream_t* streamPool
 	);
 inline void lbfgsbprojgr(const int& n,
-	const real* l,
-	const real* u,
+	const realreal* l,
+	const realreal* u,
 	const int* nbd,
-	const real* x,
-	const real* g,
-	real* buf_n,
-	real* sbgnrm_h,
-	real* sbgnrm_d,
+	const realreal* x,
+	const realreal* g,
+	realreal* buf_n,
+	realreal* sbgnrm_h,
+	realreal* sbgnrm_d,
 	const cudaStream_t& stream
 	);
 inline void lbfgsbsubsm(const int& n,
 	const int& m,
 	const int& nsub,
 	const int* ind,
-	const real* l,
-	const real* u,
+	const realreal* l,
+	const realreal* u,
 	const int* nbd,
-	real* x,
-	real* d,
-	real* xp,
-	const real* ws,
-	const real* wy,
-	const real& theta,
-	const real* xx,
-	const real* gg,
+	realreal* x,
+	realreal* d,
+	realreal* xp,
+	const realreal* ws,
+	const realreal* wy,
+	const realreal& theta,
+	const realreal* xx,
+	const realreal* gg,
 	const int& col,
 	const int& head,
-	real* wv,
-	real* wn,
+	realreal* wv,
+	realreal* wn,
 	int& info,
 	const int& iPitch_wn,
 	const int& iPitch_ws,
-	real* buf_array_p,
-	real* buf_s_r,
+	realreal* buf_array_p,
+	realreal* buf_s_r,
 	int* bufi_s_r,
 	const int& iPitch_normal,
 	const cudaStream_t& stream
 	);
-inline void lbfgsbdcsrch(const real& f,
-	const real& g,
-	real& stp,
-	const real& ftol,
-	const real& gtol,
-	const real& xtol,
-	const real& stpmin,
-	const real& stpmax,
+inline void lbfgsbdcsrch(const realreal& f,
+	const realreal& g,
+	realreal& stp,
+	const realreal& ftol,
+	const realreal& gtol,
+	const realreal& xtol,
+	const realreal& stpmin,
+	const realreal& stpmax,
 	int& task,
 	int* isave,
-	real* dsave);
-inline void lbfgsbdcstep(real& stx,
-     real& fx,
-     real& dx,
-     real& sty,
-     real& fy,
-     real& dy,
-     real& stp,
-     const real& fp,
-     const real& dp,
+	realreal* dsave);
+inline void lbfgsbdcstep(realreal& stx,
+     realreal& fx,
+     realreal& dx,
+     realreal& sty,
+     realreal& fy,
+     realreal& dy,
+     realreal& stp,
+     const realreal& fp,
+     const realreal& dp,
      bool& brackt,
-     const real& stpmin,
-     const real& stpmax);
-inline bool lbfgsbdpofa(real* a, const int& n, const int& iPitch);
-inline void lbfgsbdtrsl(real* t,
+     const realreal& stpmin,
+     const realreal& stpmax);
+inline bool lbfgsbdpofa(realreal* a, const int& n, const int& iPitch);
+inline void lbfgsbdtrsl(realreal* t,
 	const int& n,
 	const int& iPitch,
-	real* b,
+	realreal* b,
 	const int& job,
 	int& info);
 /*************************************************************************
@@ -377,44 +377,44 @@ and it isn't necessary to allocate it in the FuncGrad subroutine.
 *************************************************************************/
 void lbfgsbminimize(const int& n,
      const int& m0,
-     real* x,
-     const real& epsg,
-     const real& epsf,
-     const real& epsx,
+     realreal* x,
+     const realreal& epsg,
+     const realreal& epsf,
+     const realreal& epsx,
      const int& maxits,
      const int* nbd,
-     const real* l,
-     const real* u,
+     const realreal* l,
+     const realreal* u,
      int& info
 	 )
 {
-    real f;
-    real* g;
-    real* xold;
-    real* xdiff;
-    real* z;
-    real* xp;
-    real* zb;
-    real* r;
-    real* d;
-    real* t;
-    real* wa;
-    real* buf_n_r;
-	real* workvec;
-	real* workvec2;
+    realreal f;
+    realreal* g;
+    realreal* xold;
+    realreal* xdiff;
+    realreal* z;
+    realreal* xp;
+    realreal* zb;
+    realreal* r;
+    realreal* d;
+    realreal* t;
+    realreal* wa;
+    realreal* buf_n_r;
+	realreal* workvec;
+	realreal* workvec2;
 	
-	real* workmat;
-	real* ws;
-	real* wy;
-	real* sy;
-	real* ss;
-	real* yy;
-	real* wt;
-	real* wn;
-	real* snd;
-	real* buf_array_p;
-	real* buf_array_p1;
-	real* buf_array_super;
+	realreal* workmat;
+	realreal* ws;
+	realreal* wy;
+	realreal* sy;
+	realreal* ss;
+	realreal* yy;
+	realreal* wt;
+	realreal* wn;
+	realreal* snd;
+	realreal* buf_array_p;
+	realreal* buf_array_p1;
+	realreal* buf_array_super;
 
     int* bufi_n_r;
 	int* iwhere;
@@ -444,59 +444,59 @@ void lbfgsbminimize(const int& n,
 	int nenter;
 	int ileave;
 
-    real theta;
-    real fold;
-    real dr;
-    real rr;
-    real dnrm; 
-    real xstep;
-    real sbgnrm; 
-    real ddum;
-    real dtd;
-    real gd;
-    real gdold;
-    real stp;
-    real stpmx;
-    real tf;
+    realreal theta;
+    realreal fold;
+    realreal dr;
+    realreal rr;
+    realreal dnrm; 
+    realreal xstep;
+    realreal sbgnrm; 
+    realreal ddum;
+    realreal dtd;
+    realreal gd;
+    realreal gdold;
+    realreal stp;
+    realreal stpmx;
+    realreal tf;
 
 	int m = __min(m0, 8);
 
-	memAlloc<real>(&workvec, m);
-	memAlloc<real>(&workvec2, 2 * m);
-	memAlloc<real>(&g, n);
-	memAlloc<real>(&xold, n);
-	memAlloc<real>(&xdiff, n);
-	memAlloc<real>(&z, n);
-	memAlloc<real>(&xp, n);
-	memAlloc<real>(&zb, n);
-	memAlloc<real>(&r, n);
-	memAlloc<real>(&d, n);
-	memAlloc<real>(&t, n);
-	memAlloc<real>(&wa, 8 * m);
+	memAlloc<realreal>(&workvec, m);
+	memAlloc<realreal>(&workvec2, 2 * m);
+	memAlloc<realreal>(&g, n);
+	memAlloc<realreal>(&xold, n);
+	memAlloc<realreal>(&xdiff, n);
+	memAlloc<realreal>(&z, n);
+	memAlloc<realreal>(&xp, n);
+	memAlloc<realreal>(&zb, n);
+	memAlloc<realreal>(&r, n);
+	memAlloc<realreal>(&d, n);
+	memAlloc<realreal>(&t, n);
+	memAlloc<realreal>(&wa, 8 * m);
 
 	const int superpitch = lbfgsbcuda::iDivUp(n, ((1 << lbfgsbcuda::log2Up(n)) - 1) / 2);
 	const int normalpitch = superpitch;
-	memAlloc<real>(&buf_n_r, superpitch);	
-	memAlloc<real>(&buf_array_p, m * normalpitch * 2);
+	memAlloc<realreal>(&buf_n_r, superpitch);	
+	memAlloc<realreal>(&buf_array_p, m * normalpitch * 2);
 #ifdef USE_STREAM
-	memAlloc<real>(&buf_array_p1, m * normalpitch * 2);	
+	memAlloc<realreal>(&buf_array_p1, m * normalpitch * 2);	
 #else
 	buf_array_p1 = buf_array_p;
 #endif
-	memAlloc<real>(&buf_array_super, m * m * superpitch);
+	memAlloc<realreal>(&buf_array_super, m * m * superpitch);
 
 	size_t pitch0 = m;
-	memAllocPitch<real>(&ws, m, n, &pitch0);
-	memAllocPitch<real>(&wy, m, n, NULL);
-	memAllocPitch<real>(&sy, m, m, NULL);
-	memAllocPitch<real>(&ss, m, m, NULL);
-	memAllocPitch<real>(&yy, m, m, NULL);
-	memAllocPitch<real>(&wt, m, m, NULL);
-	memAllocPitch<real>(&workmat, m, m, NULL);
+	memAllocPitch<realreal>(&ws, m, n, &pitch0);
+	memAllocPitch<realreal>(&wy, m, n, NULL);
+	memAllocPitch<realreal>(&sy, m, m, NULL);
+	memAllocPitch<realreal>(&ss, m, m, NULL);
+	memAllocPitch<realreal>(&yy, m, m, NULL);
+	memAllocPitch<realreal>(&wt, m, m, NULL);
+	memAllocPitch<realreal>(&workmat, m, m, NULL);
 
 	size_t pitch1 = m * 2;
-	memAllocPitch<real>(&wn, m * 2, m * 2, &pitch1);
-	memAllocPitch<real>(&snd, m * 2, m * 2, NULL);
+	memAllocPitch<realreal>(&wn, m * 2, m * 2, &pitch1);
+	memAllocPitch<realreal>(&snd, m * 2, m * 2, NULL);
 	
 	memAlloc<int>(&bufi_n_r, superpitch);
 	memAlloc<int>(&iwhere, n);
@@ -508,16 +508,16 @@ void lbfgsbminimize(const int& n,
 	memAlloc<int>(&temp_ind3, n);
 	memAlloc<int>(&temp_ind4, n);
 
-	real* sbgnrm_h;
-	real* sbgnrm_d;
+	realreal* sbgnrm_h;
+	realreal* sbgnrm_d;
 
-	real* dsave13;
-	memAllocHost<real>(&sbgnrm_h, &sbgnrm_d, sizeof(real));
-	memAllocHost<real>(&dsave13, NULL, 16 * sizeof(real));
+	realreal* dsave13;
+	memAllocHost<realreal>(&sbgnrm_h, &sbgnrm_d, sizeof(realreal));
+	memAllocHost<realreal>(&dsave13, NULL, 16 * sizeof(realreal));
 
 	int* isave2 = (int*)(dsave13 + 13);
 	
-	real epsx2 = epsx * epsx;
+	realreal epsx2 = epsx * epsx;
 
 	cudaStream_t streamPool[16] = {NULL};
 
@@ -538,12 +538,13 @@ void lbfgsbminimize(const int& n,
     internalinfo = 0;
 	task = 0;
 	nfree = n;
+	realreal out_x[10];
 
 	lbfgsbcuda::CheckBuffer(x, n, n);
     lbfgsbactive(n, l, u, nbd, x, iwhere);
 	lbfgsbcuda::CheckBuffer(x, n, n);
-	memCopyAsync(xold, x, n * sizeof(real), cudaMemcpyDeviceToDevice);
-	memCopyAsync(xp, x, n * sizeof(real), cudaMemcpyDeviceToDevice);
+	memCopyAsync(xold, x, n * sizeof(realreal), cudaMemcpyDeviceToDevice);
+	memCopyAsync(xp, x, n * sizeof(realreal), cudaMemcpyDeviceToDevice);
     funcgrad(x, f, g, NULL);
 
     nfgv = 1;
@@ -655,7 +656,7 @@ void lbfgsbminimize(const int& n,
 		lbfgsbcuda::minimize::vsub_v(n, g, r, r, streamPool[3]);
 		lbfgsbcuda::minimize::vdot_vv(n, r, r, rr, streamPool[3]);
 
-		ddum = fmaxf(fabs(fold), fmaxf(fabs(f), real(1)));
+		ddum = fmaxf(fabs(fold), fmaxf(fabs(f), realreal(1)));
 
 		if( fold - f <= epsf * ddum )
 		{
@@ -710,8 +711,8 @@ void lbfgsbminimize(const int& n,
 
 		if( internalinfo!=0 )
 		{
-			memCopyAsync(x, t, n * sizeof(real), cudaMemcpyDeviceToDevice, streamPool[1]);
-			memCopyAsync(g, r, n * sizeof(real), cudaMemcpyDeviceToDevice, streamPool[1]);
+			memCopyAsync(x, t, n * sizeof(realreal), cudaMemcpyDeviceToDevice, streamPool[1]);
+			memCopyAsync(g, r, n * sizeof(realreal), cudaMemcpyDeviceToDevice, streamPool[1]);
 			f = fold;
 
 			if( col==0 )
@@ -786,10 +787,10 @@ void lbfgsbminimize(const int& n,
 }
 
 inline void lbfgsbactive(const int& n,
-	const real* l,
-	const real* u,
+	const realreal* l,
+	const realreal* u,
 	const int* nbd,
-	real* x,
+	realreal* x,
 	int* iwhere
 	)
 {
@@ -799,12 +800,12 @@ inline void lbfgsbactive(const int& n,
 }
 
 inline void lbfgsbbmv(const int& m,
-     const real* sy,
-     real* wt,
+     const realreal* sy,
+     realreal* wt,
      const int& col,
 	 const int& iPitch,
-     const real* v,
-     real* p,	
+     const realreal* v,
+     realreal* p,	
 	 const cudaStream_t& stream,
      int& info)
 {
@@ -823,30 +824,30 @@ inline void lbfgsbbmv(const int& m,
 
 
 inline void lbfgsbcauchy(const int& n,
-     const real* x,
-     const real* l,
-     const real* u,
+     const realreal* x,
+     const realreal* l,
+     const realreal* u,
      const int* nbd,
-     const real* g,
-     real* t,
-     real* xcp,
-     real* xcpb,
+     const realreal* g,
+     realreal* t,
+     realreal* xcp,
+     realreal* xcpb,
      const int& m,
-     const real* wy,
-     const real* ws,
-     const real* sy,
+     const realreal* wy,
+     const realreal* ws,
+     const realreal* sy,
 	 const int iPitch,
-     real* wt,
-     const real& theta,
+     realreal* wt,
+     const realreal& theta,
      const int& col,
      const int& head,
-     real* p,
-     real* c,
-     real* v,
+     realreal* p,
+     realreal* c,
+     realreal* v,
      int& nint,
-     const real& sbgnrm,
-	 real* buf_s_r,
-	 real* buf_array_p,
+     const realreal& sbgnrm,
+	 realreal* buf_s_r,
+	 realreal* buf_array_p,
 	 int* iwhere,
 	 const int& iPitch_normal,
 	 const cudaStream_t* streamPool,
@@ -868,24 +869,24 @@ inline void lbfgsbcauchy(const int& n,
 
 inline void lbfgsbcmprlb(const int& n,
      const int& m,
-     const real* x,
-     const real* g,
-     const real* ws,
-     const real* wy,
-     const real* sy,
-     real* wt,
-     const real* z,
-     real* r,
-     real* wa,
+     const realreal* x,
+     const realreal* g,
+     const realreal* ws,
+     const realreal* wy,
+     const realreal* sy,
+     realreal* wt,
+     const realreal* z,
+     realreal* r,
+     realreal* wa,
      const int* index,
-     const real& theta,
+     const realreal& theta,
      const int& col,
      const int& head,
 	 const int& nfree,
 	 const bool& cnstnd,
      int& info,
-     real* workvec,
-     real* workvec2,
+     realreal* workvec,
+     realreal* workvec2,
 	 const int& iPitch,
 	 const cudaStream_t& stream
 	 )
@@ -909,20 +910,20 @@ inline void lbfgsbformk(const int& n,
 	const int* indx2,
      const int& iupdat,
      const bool& updatd,
-     real* wn,
-     real* wn1,
+     realreal* wn,
+     realreal* wn1,
      const int& m,
-     const real* ws,
-     const real* wy,
-     const real* sy,
-     const real& theta,
+     const realreal* ws,
+     const realreal* wy,
+     const realreal* sy,
+     const realreal& theta,
      const int& col,
      const int& head,
      int& info,
-     real* workvec,
-     real* workmat,
-	 real* buf_array_p,
-	 real* buf_array_super,
+     realreal* workvec,
+     realreal* workmat,
+	 realreal* buf_array_p,
+	 realreal* buf_array_super,
 	 const int& iPitch_wn,
 	 const int& iPitch_ws,
 	 const int& iPitch_super,
@@ -993,11 +994,11 @@ inline void lbfgsbformk(const int& n,
 
 
 inline void lbfgsbformt(const int& m,
-     real* wt,
-     const real* sy,
-     const real* ss,
+     realreal* wt,
+     const realreal* sy,
+     const realreal* ss,
      const int& col,
-     const real& theta,
+     const realreal& theta,
      int& info,
 	 const int& iPitch,
 	 const cudaStream_t* streamPool
@@ -1015,24 +1016,24 @@ inline void lbfgsbformt(const int& m,
 }
 
 inline void lbfgsblnsrlb(const int& n,
-     const real* l,
-     const real* u,
+     const realreal* l,
+     const realreal* u,
      const int* nbd,
-     real* x,
-     const real& f,
-     real& fold,
-     real& gd,
-     real& gdold,
-     const real* g,
-     real* d,
-     real* r,
-     real* t,
-     const real* z,
-     real& stp,
-     real& dnrm,
-     real& dtd,
-     real& xstep,
-     real& stpmx,
+     realreal* x,
+     const realreal& f,
+     realreal& fold,
+     realreal& gd,
+     realreal& gdold,
+     const realreal* g,
+     realreal* d,
+     realreal* r,
+     realreal* t,
+     const realreal* z,
+     realreal& stp,
+     realreal& dnrm,
+     realreal& dtd,
+     realreal& xstep,
+     realreal& stpmx,
      const int& iter,
      int& ifun,
      int& iback,
@@ -1041,25 +1042,25 @@ inline void lbfgsblnsrlb(const int& n,
      int& task,
      int& csave,
      int* isave,
-     real* dsave,
-	 real* buf_s_r,
+     realreal* dsave,
+	 realreal* buf_s_r,
 	 const cudaStream_t* streamPool
 	 )
 {
 	int addinfo;
 
 	addinfo = 0;
-	const static real big = 1.0E10;
-	const static real ftol = 1.0E-3;
-	const static real gtol = 0.9E0;
-	const static real xtol = 0.1E0;
-	real* stpmx_host = NULL;
-	real* stpmx_dev;
+	const static realreal big = 1.0E10;
+	const static realreal ftol = 1.0E-3;
+	const static realreal gtol = 0.9E0;
+	const static realreal xtol = 0.1E0;
+	realreal* stpmx_host = NULL;
+	realreal* stpmx_dev;
 
 
 	if( task != 1 )
 	{
-		cudaHostAlloc(&stpmx_host, sizeof(real), cudaHostAllocMapped);
+		cudaHostAlloc(&stpmx_host, sizeof(realreal), cudaHostAllocMapped);
 		cudaHostGetDevicePointer(&stpmx_dev, stpmx_host, 0);
 
 		lbfgsbcuda::minimize::vdot_vv(n, d, d, dtd, streamPool[0]);
@@ -1077,8 +1078,8 @@ inline void lbfgsblnsrlb(const int& n,
 		}
 
 
-		memCopyAsync(t, x, n * sizeof(real), cudaMemcpyDeviceToDevice, streamPool[2]);
-		memCopyAsync(r, g, n * sizeof(real), cudaMemcpyDeviceToDevice, streamPool[3]);
+		memCopyAsync(t, x, n * sizeof(realreal), cudaMemcpyDeviceToDevice, streamPool[2]);
+		memCopyAsync(r, g, n * sizeof(realreal), cudaMemcpyDeviceToDevice, streamPool[3]);
 		fold = f;
 		ifun = 0;
 		iback = 0;
@@ -1115,7 +1116,7 @@ inline void lbfgsblnsrlb(const int& n,
 			return;
 		}
 	}
-	lbfgsbdcsrch(f, gd, stp, ftol, gtol, xtol, real(0), stpmx, csave, isave, dsave);
+	lbfgsbdcsrch(f, gd, stp, ftol, gtol, xtol, realreal(0), stpmx, csave, isave, dsave);
 	if( csave!=3 )
 	{
 		task = 1;
@@ -1124,7 +1125,7 @@ inline void lbfgsblnsrlb(const int& n,
 		iback = ifun-1;
 		if( stp==1 )
 		{
-			memCopyAsync(x, z, n * sizeof(real), cudaMemcpyDeviceToDevice, streamPool[1]);
+			memCopyAsync(x, z, n * sizeof(realreal), cudaMemcpyDeviceToDevice, streamPool[1]);
 		}
 		else
 		{
@@ -1142,15 +1143,15 @@ inline void lbfgsblnsrlb(const int& n,
 
 void lbfgsbmatupdsub(const int& n,
 	const int& m,
-	real* wy,
-	real* sy,
-	const real* r,
-	const real* d,
+	realreal* wy,
+	realreal* sy,
+	const realreal* r,
+	const realreal* d,
 	int& itail,
 	const int& iupdat,
 	int& col,
 	int& head,
-	const real& dr,
+	const realreal& dr,
 	const int& iPitch0,
 	const int& iPitch_i,
 	const int& iPitch_j
@@ -1167,23 +1168,23 @@ void lbfgsbmatupdsub(const int& n,
 
 inline void lbfgsbmatupd(const int& n,
 	const int& m,
-	real* ws,
-	real* wy,
-	real* sy,
-	real* ss,
-	const real* d,
-	const real* r,
+	realreal* ws,
+	realreal* wy,
+	realreal* sy,
+	realreal* ss,
+	const realreal* d,
+	const realreal* r,
 	int& itail,
 	const int& iupdat,
 	int& col,
 	int& head,
-	real& theta,
-	const real& rr,
-	const real& dr,
-	const real& stp,
-	const real& dtd,
+	realreal& theta,
+	const realreal& rr,
+	const realreal& dr,
+	const realreal& stp,
+	const realreal& dtd,
 	const int& iPitch,
-	real* buf_array_p,
+	realreal* buf_array_p,
 	const int& iPitch_normal,
 	const cudaStream_t* streamPool
 	)
@@ -1214,14 +1215,14 @@ inline void lbfgsbmatupd(const int& n,
 
 
 inline void lbfgsbprojgr(const int& n,
-     const real* l,
-     const real* u,
+     const realreal* l,
+     const realreal* u,
      const int* nbd,
-     const real* x,
-     const real* g,
-	 real* buf_n,
-	 real* sbgnrm_h,
-	 real* sbgnrm_d,
+     const realreal* x,
+     const realreal* g,
+	 realreal* buf_n,
+	 realreal* sbgnrm_h,
+	 realreal* sbgnrm_d,
 	 const cudaStream_t& stream
 	 )
 {
@@ -1233,26 +1234,26 @@ inline void lbfgsbsubsm(const int& n,
      const int& m,
      const int& nsub,
      const int* ind,
-     const real* l,
-     const real* u,
+     const realreal* l,
+     const realreal* u,
      const int* nbd,
-     real* x,
-     real* d,
-	 real* xp,
-     const real* ws,
-     const real* wy,
-     const real& theta,
-	 const real* xx,
-	 const real* gg,
+     realreal* x,
+     realreal* d,
+	 realreal* xp,
+     const realreal* ws,
+     const realreal* wy,
+     const realreal& theta,
+	 const realreal* xx,
+	 const realreal* gg,
      const int& col,
      const int& head,
-     real* wv,
-     real* wn,
+     realreal* wv,
+     realreal* wn,
      int& info,
 	 const int& iPitch_wn,
 	 const int& iPitch_ws,
-	 real* buf_array_p,
-	 real* buf_s_r,
+	 realreal* buf_array_p,
+	 realreal* buf_s_r,
 	 int* bufi_s_r,
 	 const int& iPitch_normal,
 	 const cudaStream_t& stream
@@ -1271,11 +1272,11 @@ inline void lbfgsbsubsm(const int& n,
 	lbfgsbcuda::subsm::prog2(nsub, ind, col, head, m, iPitch_ws, wv, wy, ws, theta, d, stream);
 	lbfgsbcuda::CheckBuffer(d, n, n);
 
-	cutilSafeCall(cudaMemcpyAsync(xp, x, n * sizeof(real), cudaMemcpyDeviceToDevice, stream));
+	cutilSafeCall(cudaMemcpyAsync(xp, x, n * sizeof(realreal), cudaMemcpyDeviceToDevice, stream));
 
-	real* pddp = NULL;
-	real* pddp_dev = NULL;
-	cudaMallocHost(&pddp, sizeof(real), cudaHostAllocMapped);
+	realreal* pddp = NULL;
+	realreal* pddp_dev = NULL;
+	cudaMallocHost(&pddp, sizeof(realreal), cudaHostAllocMapped);
 	cudaHostGetDevicePointer(&pddp_dev, pddp, 0);	
 
 	lbfgsbcuda::subsm::prog21(n, nsub, ind, d, x, l, u, nbd, xx, gg, buf_s_r, pddp_dev, stream);
@@ -1283,7 +1284,7 @@ inline void lbfgsbsubsm(const int& n,
 	cutilSafeCall(cudaStreamSynchronize(stream));
 	
 	if(*pddp > 0) {
-		cutilSafeCall(cudaMemcpyAsync(x, xp, n * sizeof(real), cudaMemcpyDeviceToDevice, stream));
+		cutilSafeCall(cudaMemcpyAsync(x, xp, n * sizeof(realreal), cudaMemcpyDeviceToDevice, stream));
 
 		lbfgsbcuda::subsm::prog3(nsub, ind, d, nbd, buf_s_r, bufi_s_r, x, u, l, stream);
 		lbfgsbcuda::CheckBuffer(x, n, n);
@@ -1294,43 +1295,43 @@ inline void lbfgsbsubsm(const int& n,
 }
 
 
-inline void lbfgsbdcsrch(const real& f,
-     const real& g,
-     real& stp,
-     const real& ftol,
-     const real& gtol,
-     const real& xtol,
-     const real& stpmin,
-     const real& stpmax,
+inline void lbfgsbdcsrch(const realreal& f,
+     const realreal& g,
+     realreal& stp,
+     const realreal& ftol,
+     const realreal& gtol,
+     const realreal& xtol,
+     const realreal& stpmin,
+     const realreal& stpmax,
      int& task,
      int* isave,
-     real* dsave)
+     realreal* dsave)
 {
     register bool brackt;
     register int stage;
-    register real finit;
-    register real ftest;
-    register real fm;
-    register real fx;
-    register real fxm;
-    register real fy;
-    register real fym;
-    register real ginit;
-    register real gtest;
-    register real gm;
-    register real gx;
-    register real gxm;
-    register real gy;
-    register real gym;
-    register real stx;
-    register real sty;
-    register real stmin;
-    register real stmax;
-    register real width;
-    register real width1;
+    register realreal finit;
+    register realreal ftest;
+    register realreal fm;
+    register realreal fx;
+    register realreal fxm;
+    register realreal fy;
+    register realreal fym;
+    register realreal ginit;
+    register realreal gtest;
+    register realreal gm;
+    register realreal gx;
+    register realreal gxm;
+    register realreal gy;
+    register realreal gym;
+    register realreal stx;
+    register realreal sty;
+    register realreal stmin;
+    register realreal stmax;
+    register realreal width;
+    register realreal width1;
 
-    const static real xtrapl = 1.1E0;
-    const static real xtrapu = 4.0E0;
+    const static realreal xtrapl = 1.1E0;
+    const static realreal xtrapu = 4.0E0;
 	int counter = 0;
     while(true)
     {
@@ -1460,30 +1461,30 @@ inline void lbfgsbdcsrch(const real& f,
 }
 
 
-inline void lbfgsbdcstep(real& stx,
-     real& fx,
-     real& dx,
-     real& sty,
-     real& fy,
-     real& dy,
-     real& stp,
-     const real& fp,
-     const real& dp,
+inline void lbfgsbdcstep(realreal& stx,
+     realreal& fx,
+     realreal& dx,
+     realreal& sty,
+     realreal& fy,
+     realreal& dy,
+     realreal& stp,
+     const realreal& fp,
+     const realreal& dp,
      bool& brackt,
-     const real& stpmin,
-     const real& stpmax)
+     const realreal& stpmin,
+     const realreal& stpmax)
 {
-    register real gamma;
-    register real p;
-    register real q;
-    register real r;
-    register real s;
-    register real sgnd;
-    register real stpc;
-    register real stpf;
-    register real stpq;
-    register real theta;
-	register real stpstx;
+    register realreal gamma;
+    register realreal p;
+    register realreal q;
+    register realreal r;
+    register realreal s;
+    register realreal sgnd;
+    register realreal stpc;
+    register realreal stpf;
+    register realreal stpq;
+    register realreal theta;
+	register realreal stpstx;
 
     sgnd = dp * dx / fabs(dx);
     if( fp > fx )
@@ -1623,11 +1624,11 @@ inline void lbfgsbdcstep(real& stx,
     stp = stpf;
 }
 
-inline bool lbfgsbdpofa(real* a, const int& n, const int& iPitch)
+inline bool lbfgsbdpofa(realreal* a, const int& n, const int& iPitch)
 {
     bool result;
-    real s;
-    real v;
+    realreal s;
+    realreal v;
     int j;
     int k;
 
@@ -1656,15 +1657,15 @@ inline bool lbfgsbdpofa(real* a, const int& n, const int& iPitch)
 }
 
 
-inline void lbfgsbdtrsl(real* t,
+inline void lbfgsbdtrsl(realreal* t,
      const int& n,
 	 const int& iPitch,
-     real* b,
+     realreal* b,
      const int& job,
      int& info)
 {
-    real temp;
-    real v;
+    realreal temp;
+    realreal v;
     int cse;
     int j;
     int jj;

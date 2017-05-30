@@ -37,8 +37,8 @@ namespace lbfgsbcuda {
 		void kernel0
 		(
 		int n,
-		real* wy,
-		const real* r,
+		realreal* wy,
+		const realreal* r,
 		const int iPitch)
 		{
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -51,7 +51,7 @@ namespace lbfgsbcuda {
 		__global__
 		void kernel1
 		(
-			real* sy,
+			realreal* sy,
 			const int iPitch_i,
 			const int iPitch_j,
 			const int col
@@ -60,7 +60,7 @@ namespace lbfgsbcuda {
 			const int i = threadIdx.x;
 			const int j = threadIdx.y;
 
-			__shared__ real sdata[8][8];
+			__shared__ realreal sdata[8][8];
 
 			sdata[j][i] = sy[j * iPitch_i + i * iPitch_j];
 
@@ -81,17 +81,17 @@ namespace lbfgsbcuda {
 			const int col,
 			const int iPitch,
 			const int oPitch,
-			const real* d,
-			real* buf_array_p,
-			const real* wy)
+			const realreal* d,
+			realreal* buf_array_p,
+			const realreal* wy)
 		{
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 			const int j = blockIdx.y;
 			const int tid = threadIdx.x;
 			
-			volatile __shared__ real sdata[bx];
+			volatile __shared__ realreal sdata[bx];
 
-			real mySum;
+			realreal mySum;
 
 			int pointr = Modular((head + j), m);
 			if(i < n) {
@@ -112,7 +112,7 @@ namespace lbfgsbcuda {
 				// now that we are using warp-synchronous programming (below)
 				// we need to declare our shared memory volatile so that the compiler
 				// doesn't reorder stores to it and induce incorrect behavior.
-				volatile real* smem = sdata + tid;
+				volatile realreal* smem = sdata + tid;
 				if(bx > 32) {*smem = mySum = mySum + smem[32];}
 				if(bx > 16) {*smem = mySum = mySum + smem[16];}
 				if(bx > 8) {*smem = mySum = mySum + smem[8];}
@@ -131,16 +131,16 @@ namespace lbfgsbcuda {
 			const int n,
 			const int iPitch,
 			const int oPitch,
-			const real* buf_in,
-			real* buf_out)
+			const realreal* buf_in,
+			realreal* buf_out)
 		{
 			const int i = blockIdx.x * blockDim.x + threadIdx.x;
 			const int j = blockIdx.y;
 			const int tid = threadIdx.x;
 			
-			volatile __shared__ real sdata[bx];
+			volatile __shared__ realreal sdata[bx];
 
-			real mySum;
+			realreal mySum;
 
 			if(i < n)
 				mySum = buf_in[j * iPitch + i];
@@ -159,7 +159,7 @@ namespace lbfgsbcuda {
 				// now that we are using warp-synchronous programming (below)
 				// we need to declare our shared memory volatile so that the compiler
 				// doesn't reorder stores to it and induce incorrect behavior.
-				volatile real* smem = sdata + tid;
+				volatile realreal* smem = sdata + tid;
 				if(bx > 32) {*smem = mySum = mySum + smem[32];}
 				if(bx > 16) {*smem = mySum = mySum + smem[16];}
 				if(bx > 8) {*smem = mySum = mySum + smem[8];}
@@ -176,19 +176,19 @@ namespace lbfgsbcuda {
 		void prog0(
 			const int& n,
 			const int& m,
-			real* wy,
-			real* sy,
-			const real* r,
-			const real* d,
+			realreal* wy,
+			realreal* sy,
+			const realreal* r,
+			const realreal* d,
 			int& itail,
 			const int& iupdat,
 			int& col,
 			int& head,
-			const real& dr,
+			const realreal& dr,
 			const int& iPitch0,
 			const int& iPitch_i,
 			const int& iPitch_j,
-			real* buf_array_p,
+			realreal* buf_array_p,
 			const int& iPitch_normal,
 			cudaStream_t st)
 		{
@@ -210,9 +210,9 @@ namespace lbfgsbcuda {
 				int mi = log2Up(nblock0);
 				int nblock1 = iDivUp2(nblock0, mi);
 			
-				real* oFinal = sy + (col - 1) * iPitch_i;
+				realreal* oFinal = sy + (col - 1) * iPitch_i;
 
-				real* output = (nblock1 == 1) ? oFinal : buf_array_p;
+				realreal* output = (nblock1 == 1) ? oFinal : buf_array_p;
 
 				int op20 = (nblock1 == 1) ? iPitch_j : iPitch_normal;
 				
@@ -228,7 +228,7 @@ namespace lbfgsbcuda {
 
 					nblock1 = iDivUp2(nblock0, mi);
 
-					real* input = output;
+					realreal* input = output;
 
 					output = (nblock1 == 1) ? oFinal : (output + nblock0);
 
@@ -243,7 +243,7 @@ namespace lbfgsbcuda {
 				}
 				CheckBuffer(sy, iPitch_i, col * iPitch_i);
 			}
-			cudaMemcpyAsync(sy + (col - 1) * iPitch0 + col - 1, &dr, sizeof(real), cudaMemcpyHostToDevice, st);
+			cudaMemcpyAsync(sy + (col - 1) * iPitch0 + col - 1, &dr, sizeof(realreal), cudaMemcpyHostToDevice, st);
 			CheckBuffer(sy, iPitch_i, col * iPitch_i);
 		}
 

@@ -35,19 +35,19 @@ namespace lbfgsbcuda {
 
 		#define CUDA_BLOCK_SIZE 16
 		
-		__global__ void cuda_chol_iter(real* m, int n, int boffset) {
+		__global__ void cuda_chol_iter(realreal* m, int n, int boffset) {
 			int k;
 			int x = threadIdx.x ;
 			int y = threadIdx.y ;
 			int bsize = blockDim.x ;
-			__shared__ real b[CUDA_BLOCK_SIZE][CUDA_BLOCK_SIZE+1] ;
+			__shared__ realreal b[CUDA_BLOCK_SIZE][CUDA_BLOCK_SIZE+1] ;
 			b [x][y] = m[ ( x + boffset ) * n + boffset + y ];
 			for ( k = 0; k < bsize; k++) {
 				__syncthreads();
 				if( x == k ) {
 					if(b[x][x] < machineepsilon)
 						b[x][x] = machineepsilon;
-					real fac = sqrtr(b[x][x]);
+					realreal fac = sqrtr(b[x][x]);
 					if ( y >= x ) {
 						b[x][y] /= fac;
 					}
@@ -61,7 +61,7 @@ namespace lbfgsbcuda {
 			m[ (boffset + x) * n + boffset + y ] = b[x][y];
 		}
 
-		void prog0(real* m, int n, int pitch, int boffset, const cudaStream_t& st) {
+		void prog0(realreal* m, int n, int pitch, int boffset, const cudaStream_t& st) {
 			cuda_chol_iter<<<1, dim3(n, n), 0, st>>>
 				(m, pitch, boffset);
 		}
