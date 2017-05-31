@@ -87,7 +87,9 @@ namespace lbfgsbcuda {
 
 			kernel0<<<dim3(iDivUp(n, 512)), dim3(512)>>>
 				(n, l, u, nbd, x, iwhere);
-
+			cudaError_t err = cudaGetLastError();
+			if (err != cudaSuccess)
+				printf("Error: %s\n", cudaGetErrorString(err));
 			CheckBuffer_int(iwhere, n, n);
 		}
 	};

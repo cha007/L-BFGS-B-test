@@ -147,6 +147,9 @@ namespace lbfgsbcuda {
 				kernel0<<<nblocks, dim3(8, 4), 0, st>>>
 					(sy, col, v, iPitch, p);
 			}
+			cudaError_t err = cudaGetLastError();
+			if (err != cudaSuccess)
+				printf("Error: %s\n", cudaGetErrorString(err));
 		}
 
 		void prog1(
@@ -200,6 +203,9 @@ namespace lbfgsbcuda {
 				kernel1<<<nblocks, dim3(8, 4), 0, st>>>
 					(sy, col, v, iPitch, p);
 			}
+			cudaError_t err = cudaGetLastError();
+			if (err != cudaSuccess)
+				printf("Error: %s\n", cudaGetErrorString(err));
 		}
 	};
 };

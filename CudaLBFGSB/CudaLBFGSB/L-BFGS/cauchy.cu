@@ -510,7 +510,11 @@ namespace lbfgsbcuda {
 				CheckBuffer(p, col * 2, col * 2);
 				kernel22<<<dim3(1), dim3(col), 0, streamPool[2]>>>
 					(col, p + col, theta);
-
+				{
+					cudaError_t err = cudaGetLastError();
+					if (err != cudaSuccess)
+						printf("Error: %s\n", cudaGetErrorString(err));
+				}
 				CheckBuffer(p, col * 2, col * 2);
 			}
 			
@@ -547,10 +551,19 @@ namespace lbfgsbcuda {
 			
 			kernel3<<<dim3(iDivUp(n, 512)), dim3(512), 0, streamPool[0]>>>
 				(n, x, g, xcp, xcpb, dtm, iwhere);
-
+			{
+				cudaError_t err = cudaGetLastError();
+				if (err != cudaSuccess)
+					printf("Error: %s\n", cudaGetErrorString(err));
+			}
 			if(col > 0) {
 				kernel4<<<dim3(1), dim3(col * 2), 0, streamPool[1]>>>
 					(col * 2, p, c, dtm);
+			}
+			{
+				cudaError_t err = cudaGetLastError();
+				if (err != cudaSuccess)
+					printf("Error: %s\n", cudaGetErrorString(err));
 			}
 		}
 

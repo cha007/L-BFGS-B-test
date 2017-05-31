@@ -151,6 +151,11 @@ namespace lbfgsbcuda {
 				kernel1<1><<<dim3(iDivUp(nfree, nblocky)), dim3(1, nblocky), 0, stream>>>
 					(nfree, index, col, head, m, iPitch, wa, wy, ws, theta, z, x, g, r);
 			}
+			{
+				cudaError_t err = cudaGetLastError();
+				if (err != cudaSuccess)
+					printf("Error: %s\n", cudaGetErrorString(err));
+			}
 		}
 
 

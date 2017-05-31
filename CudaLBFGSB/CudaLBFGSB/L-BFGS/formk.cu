@@ -1010,7 +1010,11 @@ namespace lbfgsbcuda {
 			}
 			kernel5<<<dim3(col), dim3(8, col), 0, streamPool[2]>>>
 				(col, iPitch_wn, wn);
-
+			{
+				cudaError_t err = cudaGetLastError();
+				if (err != cudaSuccess)
+					printf("Error: %s\n", cudaGetErrorString(err));
+			}
 
 		}
 	};

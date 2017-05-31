@@ -538,10 +538,12 @@ void lbfgsbminimize(const int& n,
     internalinfo = 0;
 	task = 0;
 	nfree = n;
-	realreal out_x[10];
+	realreal out_x[10] = {0};
 
 	lbfgsbcuda::CheckBuffer(x, n, n);
     lbfgsbactive(n, l, u, nbd, x, iwhere);
+	//memCopy(out_x, x, sizeof(realreal) * 10,cudaMemcpyDeviceToHost); for (int i = 0; i < 10; i++){ std::cout << out_x[i] << " "; }std::cout << std::endl;
+
 	lbfgsbcuda::CheckBuffer(x, n, n);
 	memCopyAsync(xold, x, n * sizeof(realreal), cudaMemcpyDeviceToDevice);
 	memCopyAsync(xp, x, n * sizeof(realreal), cudaMemcpyDeviceToDevice);
@@ -574,6 +576,7 @@ void lbfgsbminimize(const int& n,
 			updatd = false;
 			continue;
 		}
+		//memCopy(out_x, x, sizeof(realreal)* 10, cudaMemcpyDeviceToHost); for (int i = 0; i < 10; i++){ std::cout << out_x[i] << " "; }std::cout << std::endl;
 
 		lbfgsbcuda::freev::prog0(n, nfree, index, nenter, ileave, iorder, iwhere, wrk, updatd, true, iter, temp_ind1, temp_ind2, temp_ind3, temp_ind4);
 		//printf("nf/ne/il: %d/%d/%d\n", nfree, nenter, ileave);
@@ -636,6 +639,8 @@ void lbfgsbminimize(const int& n,
 				fold, gd, gdold, g, d, r, t, z, 
 				stp, dnrm, dtd, xstep, stpmx, iter, ifun, iback, nfgv, 
 				internalinfo, task, csave, isave2, dsave13, buf_n_r, streamPool);
+			//memCopy(out_x, x, sizeof(realreal)* 10, cudaMemcpyDeviceToHost); for (int i = 0; i < 10; i++){ std::cout << out_x[i] << " "; }std::cout << std::endl;
+
             if( internalinfo!=0||iback>=20||task!=1 )
             {
                 break;
@@ -647,6 +652,7 @@ void lbfgsbminimize(const int& n,
 		// finish debug
 
 		lbfgsbprojgr(n, l, u, nbd, x, g, buf_n_r, sbgnrm_h, sbgnrm_d, streamPool[1]);
+		//memCopy(out_x, x, sizeof(realreal)* 10, cudaMemcpyDeviceToHost); for (int i = 0; i < 10; i++){ std::cout << out_x[i] << " "; }std::cout << std::endl;
 
 		lbfgsbcuda::minimize::vdiffxchg_v(n, xdiff, xold, x, streamPool[2]);
 		lbfgsbcuda::CheckBuffer(xdiff, n, n);
@@ -714,6 +720,7 @@ void lbfgsbminimize(const int& n,
 			memCopyAsync(x, t, n * sizeof(realreal), cudaMemcpyDeviceToDevice, streamPool[1]);
 			memCopyAsync(g, r, n * sizeof(realreal), cudaMemcpyDeviceToDevice, streamPool[1]);
 			f = fold;
+			//memCopy(out_x, x, sizeof(realreal)* 10, cudaMemcpyDeviceToHost); for (int i = 0; i < 10; i++){ std::cout << out_x[i] << " "; }std::cout << std::endl;
 
 			if( col==0 )
 			{

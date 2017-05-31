@@ -393,7 +393,7 @@ int callCpuCCNF(){
 	MatrixXd thetas(best_num_layer, (input_layer_size + 1));
 	std::vector<MatrixXd> thetas_good(num_reinit);
 	std::vector<float> lhood(num_reinit);
-
+	cublasCreate_v2(&cublasHd);
 // 	for (int i = 0;  i < num_reinit; i++){
 // 		srand((unsigned)time(NULL));
 // 		thetas_good[i] = MatrixXd::Zero(best_num_layer, (input_layer_size + 1));
@@ -484,6 +484,7 @@ int callCpuCCNF(){
 	free(l_);
 	free(u_);
 	free(xx_opti);
+	cublasDestroy_v2(cublasHd);
 	/*	// CPU
 	cpu_ccnf rb1(NX);
 	lbfgs minimizer(rb1);

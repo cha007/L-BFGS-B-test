@@ -64,6 +64,11 @@ namespace lbfgsbcuda {
 		void prog0(realreal* m, int n, int pitch, int boffset, const cudaStream_t& st) {
 			cuda_chol_iter<<<1, dim3(n, n), 0, st>>>
 				(m, pitch, boffset);
+			{
+				cudaError_t err = cudaGetLastError();
+				if (err != cudaSuccess)
+					printf("Error: %s\n", cudaGetErrorString(err));
+			}
 		}
 	}
 }
