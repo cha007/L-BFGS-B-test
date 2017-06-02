@@ -145,7 +145,7 @@ void objectiveFunction(
 	MatrixXd* y,
 	MatrixXd* PrecalcYqDs,
 	MatrixXd* PrecalcQ2sFlat){
-
+	cout << "/";
 	VectorXd alpha = params->head(numAlpha);
 	VectorXd betas = params->segment(numAlpha, numBeta);
 	MatrixXd thetas(Map<MatrixXd>(params->tail(sizeTheta_x * sizeTheta_y).data(),
@@ -154,9 +154,12 @@ void objectiveFunction(
 	int num_seqs = PrecalcYqDs->rows();
 	//gradientCCNF
 	MatrixXd allXresp = MatrixXd::Zero(thetas.rows(), x->cols());
+	cout << "/";
 	MatrixXd a = (-thetas * *x);
+	cout << "/";
 	MatrixXd b = a.array().exp();
 	allXresp = (1.0 + b.array()).cwiseInverse();
+	cout << "/";
  //out << "allXresp" << endl << allXresp << endl;
 	MatrixXd Xt = *x;
 	MatrixXd all_bs = 2 * alpha.adjoint() * allXresp;
@@ -167,10 +170,12 @@ void objectiveFunction(
 	VectorXd gradientParams = VectorXd::Zero(alpha.size() + betas.size() + thetas.rows() * thetas.cols());
 	MatrixXd SigmaInv = MatrixXd::Zero(seq_length, seq_length);
 	MatrixXd CholDecomp;		MatrixXd Sigma;		MatrixXd mus_remap;		MatrixXd mus;
+	cout << "/";
 	if (1){
 		MatrixXd I = MatrixXd::Identity(seq_length, seq_length);
 		MatrixXd precalc_zeros = MatrixXd::Zero(seq_length, seq_length);
 
+		cout << "/";
 		CalcSigmaCCNFflat(
 			&alpha,
 			&betas,
@@ -179,6 +184,7 @@ void objectiveFunction(
 			&I,
 			&precalc_zeros,
 			&SigmaInv);
+		cout << "/";
 	 //out << "SigmaInv" << endl << SigmaInv << endl;
 		LLT<MatrixXd> lltOfA(SigmaInv); // compute the Cholesky decomposition of A
 		MatrixXd L = lltOfA.matrixL();
@@ -200,6 +206,7 @@ void objectiveFunction(
 					2.0 * (1.0 - allXresp.coeffRef(i, j)) * allXresp.coeffRef(i, j) * alpha.coeffRef(i) *B.coeffRef(j);
 			}
 		}
+		cout << "/";
 	 //out << "db2_precalc" << endl << db2_precalc << endl;
 		MatrixXd gradientThetasT = Xt * db2_precalc.adjoint();
 		double gradient_alphas_add = -y->squaredNorm() + mus.squaredNorm() + num_seqs * Sigma_trace;
@@ -208,7 +215,7 @@ void objectiveFunction(
 		VectorXd gradient_alphas_add_vec = VectorXd::Constant(numAlpha, gradient_alphas_add);
 		VectorXd gradient_alphas = 2 * allXresp * (y_remap - mus_remap) + gradient_alphas_add_vec;
 		VectorXd gradient_betas = VectorXd::Zero(numBeta);
-
+		cout << "/";
 		MatrixXd B_k_mu[3];
 		B_k_mu[0] = (*PrecalcQ2s0) * mus;
 		B_k_mu[1] = (*PrecalcQ2s1) * mus;
@@ -218,6 +225,7 @@ void objectiveFunction(
 		B_k_remap[0] = Map<MatrixXd>((*PrecalcQ2s0).data(), (*PrecalcQ2s0).rows() * (*PrecalcQ2s0).cols(), 1);
 		B_k_remap[1] = Map<MatrixXd>((*PrecalcQ2s1).data(), (*PrecalcQ2s1).rows() * (*PrecalcQ2s1).cols(), 1);
 		B_k_remap[2] = Map<MatrixXd>((*PrecalcQ2s2).data(), (*PrecalcQ2s2).rows() * (*PrecalcQ2s2).cols(), 1);
+		cout << "/";
 		for (int i = 0; i < numBeta; i++){
 			double yq_B_k_yq = PrecalcYqDs->col(i).sum();
 			MatrixXd B_k_mu_remap = Map<MatrixXd>(B_k_mu[i].data(), B_k_mu[i].rows() * B_k_mu[i].cols(), 1);
@@ -226,6 +234,7 @@ void objectiveFunction(
 			double dLdb = yq_B_k_yq + mu_B_k_mu.coeffRef(0, 0) + partition_term.coeffRef(0, 0);
 			gradient_betas[i] = dLdb;
 		}
+		cout << "/";
 	 //out << "gradient_alphas" << endl << gradient_alphas << endl;
 	 //out << "gradient_betas" << endl << gradient_betas << endl;
 	 //out << "gradientThetasT" << endl << gradientThetasT << endl;
@@ -236,7 +245,7 @@ void objectiveFunction(
 // 		cout << gradient_alphas;
 // 		cout << gradient_betas;
 // 		cout << gradientParams;
-
+		cout << "/";
 	}
 
 	VectorXd regAlpha = alpha * lambda_a;
@@ -249,6 +258,7 @@ void objectiveFunction(
 	gradientParams -= gradientParamsSub;
 	*gradient = -gradientParams;
  out << "*gradient" << endl << (*gradient).adjoint() << endl;
+ cout << "/";
  //out << "*CholDecomp" << endl << CholDecomp << endl;
 	double log_normalisation = num_seqs * CholDecomp.diagonal().array().log().sum();
 	MatrixXd ymu = *y - mus;
@@ -265,6 +275,7 @@ void objectiveFunction(
 		- lambda_a * temp_alphas.coeffRef(0, 0) / 2
 		- lambda_th * temp_thetas_remap.coeffRef(0, 0) / 2;
 	*loss = -1 * logL;
+	cout << "/" << endl;
 	out << "*loss" << endl << *loss << endl;
 }
 
@@ -287,87 +298,6 @@ MatrixXd Precalc_Bs_1_Eigen;
 MatrixXd Precalc_Bs_2_Eigen;
 MatrixXd Precalc_Bs_flatEigen;
 MatrixXd Precalc_yBysEigen;
-/*
-
-class cpu_ccnf : public cpu_cost_function
-{
-public:
-	cpu_ccnf(size_t n)
-		: cpu_cost_function(n) {
-
-	}
-
-	void cpu_f(const floatdouble *h_x, floatdouble *h_y)
-	{
-		*h_y = 0.0f;
-
-		for (size_t i = 0; i < m_numDimensions / 2; ++i)
-		{
-			const floatdouble x0 = h_x[2 * i + 0];
-			const floatdouble x1 = h_x[2 * i + 1];
-
-			// f = (1-x0)^2 + 100 (x1-x0^2)^2
-
-			const floatdouble a = (1.0 - x0);
-			const floatdouble b = (x1 - x0 * x0);
-
-			*h_y += (a*a) + 100.0f * (b*b);
-		}
-	}
-
-	void cpu_gradf(const floatdouble *h_x, floatdouble *h_grad)
-	{
-		for (size_t i = 0; i < m_numDimensions / 2; ++i)
-		{
-			const floatdouble x0 = h_x[2 * i + 0];
-			const floatdouble x1 = h_x[2 * i + 1];
-
-			// df/dx0 = -2 (1-x0) - 400 (x1-x0^2) x0
-			// df/dx1 = 200 (x1 - x0^2)
-
-			h_grad[2 * i + 0] = -2.0f * (1.0f - x0) - 400.0f * x0 * (x1 - x0*x0);
-			h_grad[2 * i + 1] = 200.0f * (x1 - x0*x0);
-		}
-	}
-
-	void cpu_f_gradf(const floatdouble *h_x, floatdouble *h_f, floatdouble *h_gradf)
-	{
-// 		cpu_f(h_x, h_f);
-// 		cpu_gradf(h_x, h_gradf);
-		static int count_ = 0;
-		cout << "[" << count_ << "] begin" << endl;
-		VectorXf params_f = Map<Eigen::VectorXf>((float*)h_x, m_numDimensions, 1);
-		VectorXd params = params_f.cast <double>();
-		double loss;
-		VectorXd gradient = VectorXd::Zero(m_numDimensions);
-		objectiveFunction(
-			&loss,
-			&gradient,
-			&params,
-			best_num_layer,
-			3,
-			best_num_layer,
-			(input_layer_size + 1),
-			best_lambda_a,
-			best_lambda_b,
-			best_lambda_th,
-			&Precalc_Bs_0_Eigen,
-			&Precalc_Bs_1_Eigen,
-			&Precalc_Bs_2_Eigen,
-			&xEigen,
-			&yEigen,
-			&Precalc_yBysEigen,
-			&Precalc_Bs_flatEigen);
-		*h_f = (float)loss;
-
-		cout << "[" << count_++ << "] " << *h_f << endl;
-		VectorXf params_ff = gradient.cast <float>();
-		for (size_t i = 0; i < m_numDimensions ; ++i){
-			h_gradf[i] = params_ff[i];
-		}
-	}
-};
-*/
 
 int callCpuCCNF(){
 	MatlabVec xVec, yVec, Precalc_Bs[3], Precalc_Bs_flat, Precalc_yBys, paramsVecs;
@@ -432,9 +362,9 @@ int callCpuCCNF(){
 	cout << NX << endl;
 	num_params = NX;
 	// Use L-BFGS method to compute new sites
-	const realreal epsg = EPSG;
-	const realreal epsf = EPSF;
-	const realreal epsx = EPSX;
+	const realreal epsg = 1e-3;// EPSG;
+	const realreal epsf = 1e-4;// EPSF;
+	const realreal epsx = 1e-8;// EPSX;
 	const int maxits = 200;
 	stpscal = 2.75f; //Set for different problems!
 	int info;
@@ -468,7 +398,7 @@ int callCpuCCNF(){
 	memCopy(x, params.data(), NX * sizeof(realreal), cudaMemcpyHostToDevice);
 
 	printf("Start optimization...\n");
-	stpscal = 1.0f;//2.75f;
+	stpscal =  1.0f;//2.75f;
 
 	int	m = 8;
 	if (NX < m)
