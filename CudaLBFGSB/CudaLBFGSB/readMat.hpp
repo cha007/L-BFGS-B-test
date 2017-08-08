@@ -40,3 +40,21 @@ void matread(const char *file, const char *name, MatlabVec& v){
 	mxDestroyArray(arr);
 	matClose(pmat);
 }
+
+void matRead(const mxArray *arr, MatlabVec& v){
+	if (arr != NULL && mxIsDouble(arr) && !mxIsEmpty(arr)) {
+		// copy data
+		mwSize num = mxGetNumberOfElements(arr);
+		double *pr = mxGetPr(arr);
+		if (pr != NULL) {
+			v.data.resize(num);
+			v.data.assign(pr, pr + num);
+		}
+		v.M = mxGetM(arr);
+		v.N = mxGetN(arr);
+		printf("read mat [%d %d]\n", v.M, v.N);
+	}
+	else{
+		printf(" error\n");
+	}
+}

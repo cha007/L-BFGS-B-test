@@ -52,6 +52,7 @@
     </ClCompile>
     <ClCompile Include="ccnf_test.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="cuda_opti.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="L-BFGS\lbfgsb.h">

@@ -13,7 +13,7 @@
 
 using namespace std;
 using namespace Eigen;
-cublasHandle_t cublasHd;
+
 double stpscal;
 int num_params;
 void randInitializeWeights(MatrixXd* initial_Theta, int L_in, int L_out){
@@ -323,30 +323,7 @@ int callCpuCCNF(){
 	MatrixXd thetas(best_num_layer, (input_layer_size + 1));
 	std::vector<MatrixXd> thetas_good(num_reinit);
 	std::vector<float> lhood(num_reinit);
-	cublasCreate_v2(&cublasHd);
-// 	for (int i = 0;  i < num_reinit; i++){
-// 		srand((unsigned)time(NULL));
-// 		thetas_good[i] = MatrixXd::Zero(best_num_layer, (input_layer_size + 1));
-// 		randInitializeWeights(&thetas_good[i], input_layer_size, best_num_layer);		
-// 		lhood[i] = LogLikelihoodCCNF(
-// 			&yEigen,
-// 			&xEigen,
-// 			&alpha,
-// 			&betas,
-// 			&thetas_good[i],
-// 			best_lambda_a,
-// 			best_lambda_b,
-// 			best_lambda_th,
-// 			&Precalc_Bs_flatEigen,
-// 			0,
-// 			0,
-// 			0,
-// 			0,
-// 			num_seqs,
-// 			0
-// 			);
-// 		printf("%d %f\n", i, lhood[i]);
-// 	}
+
 	std::vector<float>::iterator result;
 	result = std::max_element(lhood.begin(), lhood.end());
 	int index = std::distance(lhood.begin(), result);
@@ -369,7 +346,7 @@ int callCpuCCNF(){
 	stpscal = 2.75f; //Set for different problems!
 	int info;
 
-	//gpu buffer
+
 	int* nbd;
 	realreal* x;
 	realreal* l;
@@ -414,18 +391,35 @@ int callCpuCCNF(){
 	free(l_);
 	free(u_);
 	free(xx_opti);
-	cublasDestroy_v2(cublasHd);
-	/*	// CPU
-	cpu_ccnf rb1(NX);
-	lbfgs minimizer(rb1);
-	minimizer.setGradientEpsilon(1e-3f);
-	minimizer.setMaxIterations(max_iter);
-	lbfgs::status stat;
-	
-	stat = minimizer.minimize_with_host_x(params_f.data());
-	cout << minimizer.statusToString(stat).c_str() << endl; */
 	return 0;
 }
+
+void readArray(const char *file, const char *name, const mxArray* v){
+	MATFile *pmat = matOpen(file, "r");
+	if (pmat == NULL) return;
+	v = matGetVariable(pmat, name);
+	int M = mxGetM(v);
+	int N = mxGetN(v);
+	printf("read mat %s [%d %d]\n", name, M, N);
+}
+
+#if 0
+int callCpuCCNF_test(){
+	const mxArray *prhs = NULL;
+	readArray("matfile_params.mat", "params", prhs);
+	readArray("matfile_Precalc_Bs_0.mat", "Precalc_Bs_1", prhs[1]);
+	readArray("matfile_Precalc_Bs_1.mat", "Precalc_Bs_2", prhs[2]);
+	readArray("matfile_Precalc_Bs_2.mat", "Precalc_Bs_3", prhs[3]);
+	readArray("matfile_x.mat", "x", prhs[4]);
+	readArray("matfile_y.mat", "y", prhs[5]);
+	readArray("matfile_Precalc_yBys.mat", "Precalc_yBys", prhs[6]);
+	readArray("matfile_Precalc_Bs_flat.mat", "Precalc_Bs_flat_1", prhs[7]);
+	callGpuCCNF(0, NULL, 8, prhs);
+	return 0;
+}
+#endif // 0
+
+
 
 void funcgrad(realreal* xxx, realreal& f, realreal* g, const cudaStream_t& stream){
 	memCopy(xx_opti, xxx, sizeof(realreal)* num_params, cudaMemcpyDeviceToHost);
@@ -457,14 +451,132 @@ void funcgrad(realreal* xxx, realreal& f, realreal* g, const cudaStream_t& strea
 	f = (float)loss;
 
 	cout << "[" << count_++ << "] " << f << endl;
-// 	VectorXf params_ff = gradient.cast <float>();
-// 	for (size_t i = 0; i < num_params; ++i){
-// 		h_gradf[i] = params_ff[i];
-// 	}
+	// 	VectorXf params_ff = gradient.cast <float>();
+	// 	for (size_t i = 0; i < num_params; ++i){
+	// 		h_gradf[i] = params_ff[i];
+	// 	}
 
 	memCopy(g, gradient.data(), sizeof(realreal)* num_params, cudaMemcpyHostToDevice);
 	lbfgsbcuda::CheckBuffer(g, num_params, num_params);
 }
-int callGpuCCNF(){
-	return 0;
+//cuda_opti
+//[param loss] = cuda_opti[
+// params
+// Precalc_Bs_0
+// Precalc_Bs_1
+// Precalc_Bs_2
+// x
+// y
+// Precalc_yBys
+// Precalc_Bs_flat]
+
+void callGpuCCNF(int nlhs, mxArray *plhs[],
+	int nrhs, const mxArray *prhs[]){
+// 	double *inData;
+// 	double *outData;
+// 	int M, N;
+// 	int i, j;
+// 	inData = mxGetPr(prhs[0]);
+// 	M = mxGetM(prhs[0]);
+// 	N = mxGetN(prhs[0]);
+// 	plhs[0] = mxCreateDoubleMatrix(M, N, mxREAL);
+// 	outData = mxGetPr(plhs[0]);
+// 	for (i = 0; i < M; i++)
+// 	for (j = 0; j < N; j++)
+// 		outData[j*M + i] = inData[(N - 1 - j)*M + i];
+	
+	if (nrhs != 8){
+		//printf("input param less than 8\n");
+		return;
+	}
+	
+	MatlabVec xVec, yVec, Precalc_Bs[3], Precalc_Bs_flat, Precalc_yBys, paramsVecs;
+	matRead(prhs[0], paramsVecs);
+	matRead(prhs[1], Precalc_Bs[0]);
+	matRead(prhs[2], Precalc_Bs[1]);
+	matRead(prhs[3], Precalc_Bs[2]);
+	matRead(prhs[4], xVec); 
+	matRead(prhs[5], yVec);
+	matRead(prhs[6], Precalc_yBys);
+	matRead(prhs[7], Precalc_Bs_flat);
+
+	xEigen = Eigen::Map<Eigen::MatrixXd>(xVec.data.data(), xVec.M, xVec.N);
+	yEigen = Eigen::Map<Eigen::MatrixXd>(yVec.data.data(), yVec.M, yVec.N);
+	Precalc_Bs_0_Eigen = Eigen::Map<Eigen::MatrixXd>(Precalc_Bs[0].data.data(), Precalc_Bs[0].M, Precalc_Bs[0].N);
+	Precalc_Bs_1_Eigen = Eigen::Map<Eigen::MatrixXd>(Precalc_Bs[1].data.data(), Precalc_Bs[1].M, Precalc_Bs[1].N);
+	Precalc_Bs_2_Eigen = Eigen::Map<Eigen::MatrixXd>(Precalc_Bs[2].data.data(), Precalc_Bs[2].M, Precalc_Bs[2].N);
+	Precalc_Bs_flatEigen = Eigen::Map<Eigen::MatrixXd>(Precalc_Bs_flat.data.data(), Precalc_Bs_flat.M, Precalc_Bs_flat.N);
+	Precalc_yBysEigen = Eigen::Map<Eigen::MatrixXd>(Precalc_yBys.data.data(), Precalc_yBys.M, Precalc_yBys.N);
+
+	VectorXd alpha = VectorXd::Constant(best_num_layer, 1.0);
+	VectorXd betas = VectorXd::Constant(3, 1.0);
+	MatrixXd thetas(best_num_layer, (input_layer_size + 1));
+	std::vector<MatrixXd> thetas_good(num_reinit);
+	std::vector<float> lhood(num_reinit);
+
+	std::vector<float>::iterator result;
+	result = std::max_element(lhood.begin(), lhood.end());
+	int index = std::distance(lhood.begin(), result);
+	thetas = thetas_good[index];
+ 
+	VectorXd params = VectorXd::Zero(alpha.size() + betas.size() + thetas.rows() * thetas.cols());
+	VectorXd B(Map<VectorXd>(thetas.data(), thetas.cols()*thetas.rows()));
+	params = Eigen::Map<Eigen::VectorXd>(paramsVecs.data.data(), paramsVecs.M);
+
+	const size_t NX = params.size();
+	VectorXf params_f = params.cast <float>();
+	cout << NX << endl;
+	num_params = NX;
+	// Use L-BFGS method to compute new sites
+	const realreal epsg = 1e-3;// EPSG;
+	const realreal epsf = 1e-4;// EPSF;
+	const realreal epsx = 1e-8;// EPSX;
+	const int maxits = 200;
+	stpscal = 2.75f; //Set for different problems!
+	int info;
+
+	//gpu buffer
+	int* nbd;
+	realreal* x;
+	realreal* l;
+	realreal* u;
+	memAlloc<int>(&nbd, NX);
+	memAlloc<realreal>(&x, NX);
+	memAlloc<realreal>(&l, NX);
+	memAlloc<realreal>(&u, NX);
+	//cpu buffer
+	int* nbd_ = (int*)malloc(sizeof(int)* NX);
+	realreal* l_ = (realreal*)malloc(sizeof(realreal) * NX);
+	realreal* u_ = (realreal*)malloc(sizeof(realreal) * NX);
+	xx_opti = (realreal*)malloc(sizeof(realreal)* NX);
+
+	for (int i = 0; i < NX; i++){
+		nbd_[i] = 0;
+	}
+	cout << "alpha betas size" << (alpha.size() + betas.size()) << endl;
+	for (int i = 0; i < (alpha.size() + betas.size()); i++){
+		nbd_[i] = 1;
+		l_[i] = 0.0;
+	}
+	memCopy(nbd, nbd_, NX * sizeof(int), cudaMemcpyHostToDevice);
+	memCopy(l, l_, NX * sizeof(realreal), cudaMemcpyHostToDevice);
+	memCopy(u, u_, NX * sizeof(realreal), cudaMemcpyHostToDevice);
+	memCopy(x, params.data(), NX * sizeof(realreal), cudaMemcpyHostToDevice);
+
+	stpscal =  1.0f;//2.75f;
+
+	int	m = 8;
+	if (NX < m)
+		m = NX;
+	lbfgsbminimize(NX, m, x, epsg, epsf, epsx, maxits, nbd, l, u, info);
+
+	memFree(x);
+	memFree(nbd);
+	memFree(l);
+	memFree(u);
+	free(nbd_);
+	free(l_);
+	free(u_);
+	free(xx_opti);
+	return;
 }

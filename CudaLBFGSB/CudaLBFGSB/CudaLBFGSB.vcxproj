@@ -175,6 +175,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ccnf_test.cpp" />
+    <ClCompile Include="cuda_opti.cpp" />
     <ClCompile Include="L-BFGS\lbfgsb.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

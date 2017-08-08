@@ -37,7 +37,7 @@ Contributors:
 #include "lbfgsb.h"
 
 //#define USE_STREAM
-
+cublasHandle_t cublasHd;
 inline void lbfgsbactive(const int& n,
 	const realreal* l,
 	const realreal* u,
@@ -388,6 +388,8 @@ void lbfgsbminimize(const int& n,
      int& info
 	 )
 {
+	//gpu buffer
+	cublasCreate_v2(&cublasHd);
     realreal f;
     realreal* g;
     realreal* xold;
@@ -645,7 +647,7 @@ void lbfgsbminimize(const int& n,
             {
                 break;
             }
-            funcgrad(x, f, g, streamPool[1]);
+            funcgrad(x, f, g, 0);
 			lbfgsbcuda::CheckBuffer(g, n, n);
        }
         iter = iter + 1;
@@ -790,6 +792,7 @@ void lbfgsbminimize(const int& n,
 	memFreeHost(sbgnrm_h);
 	memFreeHost(dsave13);
 
+	cublasDestroy_v2(cublasHd);
 	printf("Iter: %d\n", iter);
 }
 
